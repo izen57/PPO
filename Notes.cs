@@ -5,18 +5,7 @@ using System.IO.IsolatedStorage;
 
 namespace Notes {
 	internal class Note {
-		//private protected int _number;
 		public Guid Id {get; private set;}
-		//	//	private set {
-		//	//		if (value >= 0 && !_checklist.Contains(value)) {
-		//	//			_number = value;
-		//	//			_checklist.Add(value);
-		//	//		} else {
-		//	//			Console.WriteLine("Такой идентификатор уже существует.");
-		//	//		}
-		//	//}
-		//}
-
 		public DateTime CreationTime {get;} = DateTime.Now;
 		public string Body {get; private set;}
 		public bool IsTemporal {get; private set;}
@@ -39,15 +28,16 @@ namespace Notes {
 		public NotesService(INotesRepo repo) {
 			_repository = repo;
 		}
+
 		public Note Create(string body, bool isTemporal) {
 			Note note = new(Guid.NewGuid(), body, isTemporal);
 			_repository.Create(note);
 
 			return note;
 		}
-		// number -> id
+
 		public void Edit(Guid id, string body, bool isTemporal) {
-			_repository.Edit(id, body, isTemporal);
+			_repository.Edit(new Note(id, body, isTemporal));
 		}
 
 		public void Delete(Guid id) {
@@ -55,7 +45,7 @@ namespace Notes {
 		}
 
 		public /*SortedSet<Note> */void List() {
-			_repository.List();
+			_repository.GetAllFiles("*");
 		}
 	}
 
@@ -76,7 +66,7 @@ namespace Notes {
 	internal interface INotesRepo {
 		void Create(Note note);
 		void Edit(Note note);
-		void Delete(Note note);
+		void Delete(Guid id);
 		List<string> GetAllFiles(string pattern, IsolatedStorageFile storeFile);
 	}
 
@@ -96,22 +86,26 @@ namespace Notes {
 				throw new IsolatedStorageException();
 			using (StreamWriter TextNote = new("/notes")) {
 				_isoStore.CreateFile("my note.txt");
+				TextNote.WriteLine(note.Id);
+				TextNote.WriteLine(note.CreationTime);
+				TextNote.WriteLine(note.Body);
 			}
 			Console.WriteLine("Заметка создана.");
 		}
 
 		public void Edit(Note note) {
 			if (_isoStore.FileExists("my note.txt"))
-				using (IsolatedStorageFileStream isoStream = new("TestStore.txt", FileMode.CreateNew, _isoStore)) {
+				using (IsolatedStorageFileStream isoStream = new("my note.txt", FileMode.CreateNew, _isoStore)) {
 					using (StreamWriter writer = new(isoStream)) {
-						writer.WriteLine("Hello Isolated Storage");
-						Console.WriteLine("You have written to the file.");
+						writer.WriteLine(note.Id);
+						writer.WriteLine(note.CreationTime);
+						writer.WriteLine(note.Body);
 					}
 				}
 			Console.WriteLine("Заметка изменена.");
 		}
 
-		public void Delete(Note note) {
+		public void Delete(Guid id) {
 			if (_isoStore.FileExists("my note.txt"))
 				_isoStore.DeleteFile("?"); // как
 			Console.WriteLine("Заметка удалена.");
