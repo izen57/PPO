@@ -40,8 +40,8 @@ namespace Notes {
 			_repository.Edit(new Note(id, body, isTemporal));
 		}
 
-		public void Delete(Guid id) {
-			_repository.Delete(id);
+		public void Delete(Note note) {
+			_repository.Delete(note);
 		}
 
 		public /*SortedSet<Note> */void List() {
@@ -66,8 +66,8 @@ namespace Notes {
 	internal interface INotesRepo {
 		void Create(Note note);
 		void Edit(Note note);
-		void Delete(Guid id);
-		List<string> GetAllFiles(string pattern, IsolatedStorageFile storeFile);
+		void Delete(Note note);
+		List<string> GetAllFiles(string pattern);
 	}
 
 	internal class NotesRepo: INotesRepo {
@@ -94,24 +94,35 @@ namespace Notes {
 		}
 
 		public void Edit(Note note) {
+			using IsolatedStorageFileStream isoStream = new("/notes/my note.txt", FileMode.Open, _isoStore);
+			using StreamReader reader = new(isoStream);
+			using StreamWriter writer = new(isoStream);
+
 			if (_isoStore.FileExists("my note.txt"))
-				using (IsolatedStorageFileStream isoStream = new("my note.txt", FileMode.CreateNew, _isoStore)) {
-					using (StreamWriter writer = new(isoStream)) {
-						writer.WriteLine(note.Id);
-						writer.WriteLine(note.CreationTime);
+				foreach (string file in GetAllFiles("notes")) {
+					string first_string = reader.ReadLine();
+					if (first_string.Equals(note.Id.ToString())) {
 						writer.WriteLine(note.Body);
+						writer.WriteLine(note.IsTemporal);
 					}
 				}
 			Console.WriteLine("Заметка изменена.");
 		}
 
-		public void Delete(Guid id) {
+		public void Delete(Note note) {
+			using IsolatedStorageFileStream isoStream = new("/notes/my note.txt", FileMode.CreateNew, _isoStore);
+			using StreamReader reader = new(isoStream);
+
 			if (_isoStore.FileExists("my note.txt"))
-				_isoStore.DeleteFile("?"); // как
+				foreach (string file in GetAllFiles("notes")) {
+					string first_string = reader.ReadLine();
+					if (first_string.Equals(note.Id.ToString()))
+						_isoStore.DeleteFile(file);
+				}
 			Console.WriteLine("Заметка удалена.");
 		}
 
-		public List<string> GetAllDirectories(string pattern, IsolatedStorageFile storeFile) {
+		public List<string> GetAllDirectories(string pattern) {
 			// Get the root of the search string.
 			string root = Path.GetDirectoryName(pattern);
 
@@ -119,12 +130,12 @@ namespace Notes {
 				root += "/";
 
 			// Retrieve directories.
-			List<string> directoryList = new(storeFile.GetDirectoryNames(pattern));
+			List<string> directoryList = new(_isoStore.GetDirectoryNames(pattern));
 
 			// Retrieve subdirectories of matches.
 			for (int i = 0, max = directoryList.Count; i < max; i++) {
 				string directory = directoryList[i] + "/";
-				List<string> more = GetAllDirectories(root + directory + "*", storeFile);
+				List<string> more = GetAllDirectories(root + directory + "*");
 
 				// For each subdirectory found, add in the base path.
 				for (int j = 0; j < more.Count; j++)
@@ -140,16 +151,16 @@ namespace Notes {
 			return directoryList;
 		}
 
-		public List<string> GetAllFiles(string pattern, IsolatedStorageFile storeFile) {
+		public List<string> GetAllFiles(string pattern) {
 			// Get the root and file portions of the search string.
 			string fileString = Path.GetFileName(pattern);
 
-			List<string> fileList = new(storeFile.GetFileNames(pattern));
+			List<string> fileList = new(_isoStore.GetFileNames(pattern));
 
 			// Loop through the subdirectories, collect matches,
 			// and make separators consistent.
-			foreach (string directory in GetAllDirectories("*", storeFile))
-				foreach (string file in storeFile.GetFileNames(directory + "/" + fileString))
+			foreach (string directory in GetAllDirectories("*"))
+				foreach (string file in _isoStore.GetFileNames(directory + "/" + fileString))
 					fileList.Add(directory + "/" + file);
 
 			return fileList;

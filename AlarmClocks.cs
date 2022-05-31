@@ -55,7 +55,7 @@ namespace AlarmClocks {
 		void Create(AlarmClock alarmClock);
 		void Edit(AlarmClock alarmClock);
 		void Delete(AlarmClock alarmClock);
-		List<string> GetAllFiles(string pattern, IsolatedStorageFile storeFile);
+		List<string> GetAllFiles(string pattern);
 	}
 
 	internal class AlarmClockRepo: IAlarmClockRepo {
@@ -82,10 +82,14 @@ namespace AlarmClocks {
 		}
 
 		public void Edit(AlarmClock alarmClock) {
+			using IsolatedStorageFileStream isoStream = new("/alarmclocks/my alarmclock.txt", FileMode.Open, _isoStore);
+			using StreamReader reader = new(isoStream);
+			using StreamWriter writer = new(isoStream);
+
 			if (_isoStore.FileExists("my alarmclock.txt"))
-				using (IsolatedStorageFileStream isoStream = new("TestStore.txt", FileMode.CreateNew, _isoStore)) {
-					using (StreamWriter writer = new(isoStream)) {
-						writer.WriteLine(alarmClock.AlarmTime);
+				foreach (string file in GetAllFiles("alarmclocks")) {
+					string first_string = reader.ReadLine();
+					if (first_string.Equals(alarmClock.AlarmTime.ToString())) {
 						writer.WriteLine(alarmClock.Name);
 						writer.WriteLine(alarmClock.AlarmClockColor);
 						writer.WriteLine(alarmClock.IsWorking);
@@ -95,12 +99,19 @@ namespace AlarmClocks {
 		}
 
 		public void Delete(AlarmClock alarmClock) {
+			using IsolatedStorageFileStream isoStream = new("/alarmclocks/my alarmclock.txt", FileMode.CreateNew, _isoStore);
+			using StreamReader reader = new(isoStream);
+
 			if (_isoStore.FileExists("my alarmclock.txt"))
-				_isoStore.DeleteFile("?"); // как
+				foreach (string file in GetAllFiles("alarmclocks")) {
+					string first_string = reader.ReadLine();
+					if (first_string.Equals(alarmClock.AlarmTime.ToString()))
+						_isoStore.DeleteFile(file);
+				}
 			Console.WriteLine("Заметка удалена.");
 		}
 
-		public List<string> GetAllDirectories(string pattern, IsolatedStorageFile storeFile) {
+		public List<string> GetAllDirectories(string pattern) {
 			// Get the root of the search string.
 			string root = Path.GetDirectoryName(pattern);
 
@@ -108,12 +119,12 @@ namespace AlarmClocks {
 				root += "/";
 
 			// Retrieve directories.
-			List<string> directoryList = new(storeFile.GetDirectoryNames(pattern));
+			List<string> directoryList = new(_isoStore.GetDirectoryNames(pattern));
 
 			// Retrieve subdirectories of matches.
 			for (int i = 0, max = directoryList.Count; i < max; i++) {
 				string directory = directoryList[i] + "/";
-				List<string> more = GetAllDirectories(root + directory + "*", storeFile);
+				List<string> more = GetAllDirectories(root + directory + "*");
 
 				// For each subdirectory found, add in the base path.
 				for (int j = 0; j < more.Count; j++)
@@ -129,16 +140,16 @@ namespace AlarmClocks {
 			return directoryList;
 		}
 
-		public List<string> GetAllFiles(string pattern, IsolatedStorageFile storeFile) {
+		public List<string> GetAllFiles(string pattern) {
 			// Get the root and file portions of the search string.
 			string fileString = Path.GetFileName(pattern);
 
-			List<string> fileList = new(storeFile.GetFileNames(pattern));
+			List<string> fileList = new(_isoStore.GetFileNames(pattern));
 
 			// Loop through the subdirectories, collect matches,
 			// and make separators consistent.
-			foreach (string directory in GetAllDirectories("*", storeFile))
-				foreach (string file in storeFile.GetFileNames(directory + "/" + fileString))
+			foreach (string directory in GetAllDirectories("*"))
+				foreach (string file in _isoStore.GetFileNames(directory + "/" + fileString))
 					fileList.Add(directory + "/" + file);
 
 			return fileList;

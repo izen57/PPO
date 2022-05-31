@@ -47,5 +47,4 @@ namespace Stopwatches {
 			stopwatch.IsWorking = isWorking;
 		}
 	}
-
 }
