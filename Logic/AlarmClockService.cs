@@ -1,7 +1,6 @@
 ﻿using PPO.Database;
 using PPO.Model;
 using System;
-using System.Drawing;
 
 namespace PPO.Logic {
 	public class AlarmClockService {

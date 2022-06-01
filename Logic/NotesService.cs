@@ -1,6 +1,5 @@
 ﻿using PPO.Database;
 using PPO.Model;
-
 using System;
 
 namespace PPO.Logic {
