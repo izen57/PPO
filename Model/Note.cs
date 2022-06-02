@@ -4,8 +4,8 @@ namespace PPO.Model {
 	public class Note {
 		public Guid Id { get; private set; }
 		public DateTime CreationTime { get; } = DateTime.Now;
-		public string Body { get; private set; }
-		public bool IsTemporal { get; private set; }
+		public string Body { get; set; }
+		public bool IsTemporal { get; set; }
 
 		public Note() { }
 

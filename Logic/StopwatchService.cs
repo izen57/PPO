@@ -5,7 +5,6 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 
-
 namespace PPO.Logic {
 	internal class StopwatchService {
 		Stopwatch stopwatch;

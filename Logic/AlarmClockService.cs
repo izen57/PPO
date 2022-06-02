@@ -29,7 +29,13 @@ namespace PPO.Logic {
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {
-			alarmClock.IsWorking = !alarmClock.IsWorking;
+			AlarmClock invertedAlarmClock = new(
+				alarmClock.AlarmTime,
+				alarmClock.Name,
+				alarmClock.AlarmClockColor,
+				!alarmClock.IsWorking
+			);
+			Edit(invertedAlarmClock);
 		}
 	}
 }
