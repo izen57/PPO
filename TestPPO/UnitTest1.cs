@@ -4,6 +4,7 @@ using PPO.Logic;
 using PPO.Model;
 
 using System.Drawing;
+using systemStopwatch = System.Diagnostics.Stopwatch;
 
 namespace TestPPO {
 	[TestClass]

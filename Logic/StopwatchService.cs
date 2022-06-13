@@ -6,32 +6,32 @@ using System.Drawing;
 using System.Collections.Generic;
 
 namespace PPO.Logic {
-	internal class StopwatchService {
-		Stopwatch stopwatch;
+	public class StopwatchService {
+		static Stopwatch _stopwatch;
 
 		public StopwatchService() { }
 		public void Set() {
-			// start watch
+			_stopwatch.Timing.Start();
 		}
 
 		public void Reset() {
-			// stop watch
+			_stopwatch.Timing.Stop();
 		}
 
 		public void ResetWork() {
-			stopwatch.IsWorking = !stopwatch.IsWorking;
+			_stopwatch.IsWorking = !_stopwatch.IsWorking;
 		}
 
 		public Stopwatch Get() {
-			return stopwatch;
+			return _stopwatch;
 		}
 
-		public void Edit(string name, Color stopwatchColor, TimeOnly timing, List<TimeOnly> timeFlags, bool isWorking) {
-			stopwatch.Name = name;
-			stopwatch.StopwatchColor = stopwatchColor;
-			stopwatch.Timing = timing;
-			stopwatch.TimeFlags = timeFlags;
-			stopwatch.IsWorking = isWorking;
+		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<TimeOnly> timeFlags, bool isWorking) {
+			_stopwatch.Name = name;
+			_stopwatch.StopwatchColor = stopwatchColor;
+			_stopwatch.Timing = timing;
+			_stopwatch.TimeFlags = timeFlags;
+			_stopwatch.IsWorking = isWorking;
 		}
 	}
 }
