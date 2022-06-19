@@ -6,7 +6,7 @@ namespace PPO.Database {
 	public interface IAlarmClockRepo {
 		void Create(AlarmClock alarmClock);
 		void Edit(AlarmClock alarmClock);
-		void Delete(TimeOnly alarmTime);
+		void Delete(DateTime alarmTime);
 		List<string> GetAllFiles(string pattern);
 	}
 }

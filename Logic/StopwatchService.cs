@@ -12,26 +12,23 @@ namespace PPO.Logic {
 		public StopwatchService() { }
 		public void Set() {
 			_stopwatch.Timing.Start();
+			_stopwatch.IsWorking = true;
 		}
 
 		public void Reset() {
 			_stopwatch.Timing.Stop();
-		}
-
-		public void ResetWork() {
-			_stopwatch.IsWorking = !_stopwatch.IsWorking;
+			_stopwatch.IsWorking = false;
 		}
 
 		public Stopwatch Get() {
 			return _stopwatch;
 		}
 
-		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<TimeOnly> timeFlags, bool isWorking) {
+		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<DateTime> timeFlags) {
 			_stopwatch.Name = name;
 			_stopwatch.StopwatchColor = stopwatchColor;
 			_stopwatch.Timing = timing;
 			_stopwatch.TimeFlags = timeFlags;
-			_stopwatch.IsWorking = isWorking;
 		}
 	}
 }

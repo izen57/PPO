@@ -20,12 +20,12 @@ namespace PPO.Logic {
 			_repository.Edit(alarmClock);
 		}
 
-		public void Delete(TimeOnly alarmTime) {
+		public void Delete(DateTime alarmTime) {
 			_repository.Delete(alarmTime);
 		}
 
-		public void List() {
-			_repository.GetAllFiles("*");
+		public void List(string pattern) {
+			_repository.GetAllFiles(pattern);
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {
