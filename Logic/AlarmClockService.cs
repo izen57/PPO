@@ -7,7 +7,7 @@ namespace PPO.Logic {
 		IAlarmClockRepo _repository;
 
 		public AlarmClockService(IAlarmClockRepo repo) {
-			_repository = repo;
+			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
 		}
 
 		public AlarmClock Create(AlarmClock alarmClock) {
@@ -25,7 +25,7 @@ namespace PPO.Logic {
 		}
 
 		public void List(string pattern) {
-			_repository.GetAllFiles(pattern);
+			_repository.GetAllAlarmClocks(pattern);
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {

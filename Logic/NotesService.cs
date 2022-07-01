@@ -25,7 +25,7 @@ namespace PPO.Logic {
 		}
 
 		public void List() {
-			_repository.GetAllFiles("*");
+			_repository.GetAllNotes("*");
 		}
 	}
 }

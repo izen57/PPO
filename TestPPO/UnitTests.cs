@@ -53,7 +53,7 @@ namespace TestPPO {
 	public class UnitTestAlarmClock {
 		[TestMethod]
 		public void TestDelete() {
-			DateTime time = new(2, 14, 18);
+			DateTime time = new(2021, 5, 9);
 
 			var repoMock = new Mock<IAlarmClockRepo>();
 			repoMock.Setup(x => x.Delete(time)).Verifiable();

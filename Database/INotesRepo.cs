@@ -7,6 +7,6 @@ namespace PPO.Database {
 		void Create(Note note);
 		void Edit(Note note);
 		void Delete(Guid id);
-		List<string> GetAllFiles(string pattern);
+		List<string> GetAllNotes(string pattern);
 	}
 }
