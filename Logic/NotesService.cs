@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 
 namespace PPO.Logic {
-	public class NotesService {
+	public class NotesService: INotesService {
 		INotesRepo _repository;
 
 		public NotesService(INotesRepo repo) {
