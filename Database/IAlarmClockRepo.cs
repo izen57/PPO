@@ -7,6 +7,7 @@ namespace PPO.Database {
 		void Create(AlarmClock alarmClock);
 		void Edit(AlarmClock alarmClock);
 		void Delete(DateTime alarmTime);
-		List<string> GetAllAlarmClocks(string pattern);
+		AlarmClock GetAlarmClock(Guid id);
+		List<AlarmClock> GetAlarmClocks(string pattern);
 	}
 }

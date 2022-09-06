@@ -1,6 +1,7 @@
 ﻿using PPO.Database;
 using PPO.Model;
 using System;
+using System.Collections.Generic;
 
 namespace PPO.Logic {
 	public class NotesService {
@@ -24,8 +25,8 @@ namespace PPO.Logic {
 			_repository.Delete(id);
 		}
 
-		public void List() {
-			_repository.GetAllNotes("*");
+		public List<Note> GetNotes(string pattern) {
+			return _repository.GetNotes(pattern);
 		}
 	}
 }

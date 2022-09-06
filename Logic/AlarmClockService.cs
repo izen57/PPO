@@ -1,6 +1,7 @@
 ﻿using PPO.Database;
 using PPO.Model;
 using System;
+using System.Collections.Generic;
 
 namespace PPO.Logic {
 	public class AlarmClockService {
@@ -10,10 +11,8 @@ namespace PPO.Logic {
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
 		}
 
-		public AlarmClock Create(AlarmClock alarmClock) {
+		public void Create(AlarmClock alarmClock) {
 			_repository.Create(alarmClock);
-
-			return alarmClock;
 		}
 
 		public void Edit(AlarmClock alarmClock) {
@@ -24,18 +23,13 @@ namespace PPO.Logic {
 			_repository.Delete(alarmTime);
 		}
 
-		public void List(string pattern) {
-			_repository.GetAllAlarmClocks(pattern);
+		public List<AlarmClock> GetAlarmClocks(string pattern) {
+			return _repository.GetAlarmClocks(pattern);
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {
-			AlarmClock invertedAlarmClock = new(
-				alarmClock.AlarmTime,
-				alarmClock.Name,
-				alarmClock.AlarmClockColor,
-				!alarmClock.IsWorking
-			);
-			Edit(invertedAlarmClock);
+			alarmClock.IsWorking = !alarmClock.IsWorking;
+			Edit(alarmClock);
 		}
 	}
 }
