@@ -2,12 +2,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.IO.IsolatedStorage;
 
 namespace PPO.Database
 {
-	internal class AlarmClockFileRepo: IAlarmClockRepo
+	public class AlarmClockFileRepo: IAlarmClockRepo
 	{
 		IsolatedStorageFile _isoStore;
 
@@ -15,103 +16,122 @@ namespace PPO.Database
 		{
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("/alarmclocks");
-			Console.WriteLine("Папка создана.");
 		}
 
 		public void Create(AlarmClock alarmClock)
 		{
 			if (_isoStore.AvailableFreeSpace <= 0)
 				throw new IsolatedStorageException();
-			using StreamWriter TextNote = new("/alarmclocks");
+			_isoStore.CreateFile($"/alarmclocks/{alarmClock.AlarmTime}.txt");
 
-			_isoStore.CreateFile("my alarmclock.txt");
-			TextNote.WriteLine(alarmClock.AlarmTime);
+			StreamWriter TextNote = new($"/alarmclocks/{alarmClock.AlarmTime}.txt");
 			TextNote.WriteLine(alarmClock.Name);
 			TextNote.WriteLine(alarmClock.AlarmClockColor);
 			TextNote.WriteLine(alarmClock.IsWorking);
-			Console.WriteLine("Будильник создан.");
 		}
 
 		public void Edit(AlarmClock alarmClock)
 		{
-			using IsolatedStorageFileStream isoStream = new("/alarmclocks/my alarmclock.txt", FileMode.Open, _isoStore);
-			using StreamReader reader = new(isoStream);
-			using StreamWriter writer = new(isoStream);
-
-			if (_isoStore.FileExists("my alarmclock.txt"))
-				foreach (string file in GetAllFiles("alarmclocks"))
-				{
-					string first_string = reader.ReadLine();
-					if (first_string.Equals(alarmClock.AlarmTime.ToString()))
-					{
-						writer.WriteLine(alarmClock.Name);
-						writer.WriteLine(alarmClock.AlarmClockColor);
-						writer.WriteLine(alarmClock.IsWorking);
-					}
-				}
-			Console.WriteLine("Заметка изменена.");
-		}
-
-		public void Delete(AlarmClock alarmClock)
-		{
-			using IsolatedStorageFileStream isoStream = new("/alarmclocks/my alarmclock.txt", FileMode.CreateNew, _isoStore);
-			using StreamReader reader = new(isoStream);
-
-			if (_isoStore.FileExists("my alarmclock.txt"))
-				foreach (string file in GetAllFiles("alarmclocks"))
-				{
-					string first_string = reader.ReadLine();
-					if (first_string.Equals(alarmClock.AlarmTime.ToString()))
-						_isoStore.DeleteFile(file);
-				}
-			Console.WriteLine("Заметка удалена.");
-		}
-
-		public List<string> GetAllDirectories(string pattern)
-		{
-			// Get the root of the search string.
-			string root = Path.GetDirectoryName(pattern);
-
-			if (root != "")
-				root += "/";
-
-			// Retrieve directories.
-			List<string> directoryList = new(_isoStore.GetDirectoryNames(pattern));
-
-			// Retrieve subdirectories of matches.
-			for (int i = 0, max = directoryList.Count; i < max; i++)
+			IsolatedStorageFileStream isoStream;
+			try
 			{
-				string directory = directoryList[i] + "/";
-				List<string> more = GetAllDirectories(root + directory + "*");
-
-				// For each subdirectory found, add in the base path.
-				for (int j = 0; j < more.Count; j++)
-					more[j] += directory;
-
-				// Insert the subdirectories into the list and
-				// update the counter and upper bound.
-				directoryList.InsertRange(i + 1, more);
-				i += more.Count;
-				max += more.Count;
+				isoStream = new(
+					$"/alarmclocks/{alarmClock.AlarmTime}.txt",
+					FileMode.Open,
+					_isoStore
+				);
+			}
+			catch
+			{
+				throw new FileNotFoundException();
 			}
 
-			return directoryList;
+			StreamWriter writer = new(isoStream);
+
+			writer.WriteLine(alarmClock.Name);
+			writer.WriteLine(alarmClock.AlarmClockColor);
+			writer.WriteLine(alarmClock.IsWorking);
 		}
 
-		public List<string> GetAllFiles(string pattern)
+		public void Delete(DateTime alarmTime)
 		{
-			// Get the root and file portions of the search string.
-			string fileString = Path.GetFileName(pattern);
+			IsolatedStorageFileStream isoStream;
+			try
+			{
+				isoStream = new(
+					$"/alarmclocks/{alarmTime}.txt",
+					FileMode.Open,
+					_isoStore
+				);
+			}
+			catch
+			{
+				throw new FileNotFoundException();
+			}
 
-			List<string> fileList = new(_isoStore.GetFileNames(pattern));
+			_isoStore.DeleteFile($"/alarmclocks/{alarmTime}.txt");
+		}
 
-			// Loop through the subdirectories, collect matches,
-			// and make separators consistent.
-			foreach (string directory in GetAllDirectories("*"))
-				foreach (string file in _isoStore.GetFileNames(directory + "/" + fileString))
-					fileList.Add(directory + "/" + file);
+		public AlarmClock? GetAlarmClock(DateTime alarmTime)
+		{
+			string[] filelist;
+			try
+			{
+				filelist = _isoStore.GetFileNames($"/alarmclocks/{alarmTime}.txt");
+			}
+			catch
+			{
+				throw new DirectoryNotFoundException();
+			}
 
-			return fileList;
-		} // End of GetFiles.
+			foreach (string fileName in filelist)
+				if (fileName.Equals(alarmTime))
+				{
+					var readerStream = new StreamReader(fileName);
+					string? alarmClockName = readerStream.ReadLine();
+					string? alarmClockColor = readerStream.ReadLine();
+					string? alarmClockWork = readerStream.ReadLine();
+					if (alarmClockName == null || alarmClockColor == null || alarmClockWork == null)
+						throw new ArgumentNullException();
+
+					return new AlarmClock(
+						alarmTime,
+						alarmClockName,
+						Color.FromName(alarmClockColor),
+						bool.Parse(alarmClockWork)
+					);
+				}
+
+			return null;
+		}
+
+		public List<AlarmClock> GetAlarmClocksList(string pattern)
+		{
+			string[] filelist;
+			try
+			{
+				filelist = _isoStore.GetFileNames(pattern);
+			}
+			catch
+			{
+				throw new DirectoryNotFoundException();
+			}
+
+			List<AlarmClock> alarmClockList = new();
+			foreach (string fileName in filelist)
+			{
+				try
+				{
+					var alarmClock = GetAlarmClock(DateTime.Parse(fileName));
+					alarmClockList.Add(alarmClock!);
+				}
+				catch (Exception e)
+				{
+					throw e;
+				}
+			}
+
+			return alarmClockList;
+		}
 	}
 }

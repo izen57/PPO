@@ -1,103 +1,134 @@
-﻿//using PPO.Model;
-//using System;
-//using System.IO;
-//using System.Collections.Generic;
-//using System.IO.IsolatedStorage;
+﻿using PPO.Model;
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 
-//namespace PPO.Database {
-//	public class NotesRepo: INotesRepo {
-//		IsolatedStorageFile _isoStore;
+namespace PPO.Database
+{
+	public class NotesFileRepo: INotesRepo
+	{
+		IsolatedStorageFile _isoStore;
 
-//		public NotesRepo() {
-//			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
-//			_isoStore.CreateDirectory("/notes");
-//			Console.WriteLine("Папка создана");
-//		}
+		public NotesFileRepo()
+		{
+			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
+			_isoStore.CreateDirectory("/notes");
+		}
 
-//		public void Create(Note note) {
-//			// сделать создание файла
-//			if (_isoStore.AvailableFreeSpace <= 0)
-//				throw new IsolatedStorageException();
+		public void Create(Note note)
+		{
+			if (_isoStore.AvailableFreeSpace <= 0)
+				throw new IsolatedStorageException();
+			_isoStore.CreateFile($"/note/{note.Id}.txt");
 
-//			using StreamWriter TextNote = new("/notes");
-//			_isoStore.CreateFile("my note.txt");
-//			TextNote.WriteLine(note.Id);
-//			TextNote.WriteLine(note.CreationTime);
-//			TextNote.WriteLine(note.Body);
-//			Console.WriteLine("Заметка создана.");
-//		}
+			StreamWriter TextNote = new($"/note/{note.Id}.txt");
+			TextNote.WriteLine(note.CreationTime);
+			TextNote.WriteLine(note.Body);
+			TextNote.WriteLine(note.IsTemporal);
+		}
 
-//		public void Edit(Note note) {
-//			using IsolatedStorageFileStream isoStream = new("/notes/my note.txt", FileMode.Open, _isoStore);
-//			using StreamReader reader = new(isoStream);
-//			using StreamWriter writer = new(isoStream);
+		public void Edit(Note note)
+		{
+			IsolatedStorageFileStream isoStream;
+			try
+			{
+				isoStream = new(
+					$"/note/{note.Id}.txt",
+					FileMode.Open,
+					_isoStore
+				);
+			}
+			catch
+			{
+				throw new FileNotFoundException();
+			}
 
-//			if (_isoStore.FileExists("my note.txt"))
-//				foreach (string file in GetAllFiles("notes")) {
-//					string first_string = reader.ReadLine();
-//					if (first_string.Equals(note.Id.ToString())) {
-//						writer.WriteLine(note.Body);
-//						writer.WriteLine(note.IsTemporal);
-//					}
-//				}
-//			Console.WriteLine("Заметка изменена.");
-//		}
+			StreamWriter writer = new(isoStream);
 
-//		public void Delete(Guid id) {
-//			using IsolatedStorageFileStream isoStream = new("/notes/my note.txt", FileMode.CreateNew, _isoStore);
-//			using StreamReader reader = new(isoStream);
+			writer.WriteLine(note.CreationTime);
+			writer.WriteLine(note.Body);
+			writer.WriteLine(note.IsTemporal);
+		}
 
-//			if (_isoStore.FileExists("my note.txt"))
-//				foreach (string file in GetAllFiles("notes")) {
-//					string first_string = reader.ReadLine();
-//					if (first_string.Equals(id))
-//						_isoStore.DeleteFile(file);
-//				}
-//			Console.WriteLine("Заметка удалена.");
-//		}
+		public void Delete(Guid Id)
+		{
+			IsolatedStorageFileStream isoStream;
+			try
+			{
+				isoStream = new(
+					$"/note/{Id}.txt",
+					FileMode.Open,
+					_isoStore
+				);
+			}
+			catch
+			{
+				throw new FileNotFoundException();
+			}
 
-//		public List<string> GetAllDirectories(string pattern) {
-//			// Get the root of the search string.
-//			string root = Path.GetDirectoryName(pattern);
+			_isoStore.DeleteFile($"/note/{Id}.txt");
+		}
 
-//			if (root != "")
-//				root += "/";
+		public Note? GetNote(Guid Id)
+		{
+			string[] filelist;
+			try
+			{
+				filelist = _isoStore.GetFileNames($"/note/{Id}.txt");
+			}
+			catch
+			{
+				throw new DirectoryNotFoundException();
+			}
 
-//			// Retrieve directories.
-//			List<string> directoryList = new(_isoStore.GetDirectoryNames(pattern));
+			foreach (string fileName in filelist)
+				if (fileName.Equals(Id))
+				{
+					var readerStream = new StreamReader(fileName);
+					string? noteCreationTime = readerStream.ReadLine();
+					string? noteBody = readerStream.ReadLine();
+					string? noteIsTemporal = readerStream.ReadLine();
+					if (noteCreationTime == null || noteBody == null || noteIsTemporal == null)
+						throw new ArgumentNullException();
 
-//			// Retrieve subdirectories of matches.
-//			for (int i = 0, max = directoryList.Count; i < max; i++) {
-//				string directory = directoryList[i] + "/";
-//				List<string> more = GetAllDirectories(root + directory + "*");
+					return new Note(
+						Id,
+						noteBody,
+						bool.Parse(noteIsTemporal)
+					);
+				}
 
-//				// For each subdirectory found, add in the base path.
-//				for (int j = 0; j < more.Count; j++)
-//					more[j] += directory;
+			return null;
+		}
 
-//				// Insert the subdirectories into the list and
-//				// update the counter and upper bound.
-//				directoryList.InsertRange(i + 1, more);
-//				i += more.Count;
-//				max += more.Count;
-//			}
+		public List<Note> GetNotesList(string pattern)
+		{
+			string[] filelist;
+			try
+			{
+				filelist = _isoStore.GetFileNames(pattern);
+			}
+			catch
+			{
+				throw new DirectoryNotFoundException();
+			}
 
-//			return directoryList;
-//		}
+			List<Note> noteList = new();
+			foreach (string fileName in filelist)
+			{
+				try
+				{
+					var note = GetNote(Guid.Parse(fileName));
+					noteList.Add(note!);
+				}
+				catch (Exception e)
+				{
+					throw e;
+				}
+			}
 
-//		public List<string> GetAllFiles(string pattern) {
-//			// Get the root and file portions of the search string.
-//			string fileString = Path.GetFileName(pattern);
-
-//			List<string> fileList = new(_isoStore.GetFileNames(pattern));
-
-//			// Loop through the subdirectories, collect matches,
-//			// and make separators consistent.
-//			foreach (string directory in GetAllDirectories("*"))
-//				foreach (string file in _isoStore.GetFileNames(directory + "/" + fileString))
-//					fileList.Add(directory + "/" + file);
-
-//			return fileList;
-//		} // End of GetFiles.
-//	}
-//}
+			return noteList;
+		}
+	}
+}

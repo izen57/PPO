@@ -7,7 +7,7 @@ namespace PPO.Database {
 		void Create(Note note);
 		void Edit(Note note);
 		void Delete(Guid id);
-		Note GetNote(Guid id);
-		List<Note> GetNotes(string pattern);
+		Note? GetNote(Guid id);
+		List<Note> GetNotesList(string pattern);
 	}
 }

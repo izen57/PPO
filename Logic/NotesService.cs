@@ -26,7 +26,7 @@ namespace PPO.Logic {
 		}
 
 		public List<Note> GetNotes(string pattern) {
-			return _repository.GetNotes(pattern);
+			return _repository.GetNotesList(pattern);
 		}
 	}
 }

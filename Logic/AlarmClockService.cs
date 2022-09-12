@@ -24,7 +24,7 @@ namespace PPO.Logic {
 		}
 
 		public List<AlarmClock> GetAlarmClocks(string pattern) {
-			return _repository.GetAlarmClocks(pattern);
+			return _repository.GetAlarmClocksList(pattern);
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {
