@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 
 namespace PPO.Logic {
-	public class AlarmClockService: IAlarmCLockService {
+	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
 
 		public AlarmClockService(IAlarmClockRepo repo) {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace PPO.Logic
 {
-	public interface IAlarmCLockService
+	public interface IAlarmClockService
 	{
 		public void Create(AlarmClock alarmCloc);
 		public void Edit(AlarmClock alarmCloc);
