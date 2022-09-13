@@ -13,16 +13,15 @@ namespace PPO.Database
 		public NotesFileRepo()
 		{
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
-			_isoStore.CreateDirectory("/notes");
+			_isoStore.CreateDirectory("notes");
 		}
 
 		public void Create(Note note)
 		{
 			if (_isoStore.AvailableFreeSpace <= 0)
 				throw new IsolatedStorageException();
-			_isoStore.CreateFile($"/note/{note.Id}.txt");
 
-			StreamWriter TextNote = new($"/note/{note.Id}.txt");
+			using StreamWriter TextNote = new(_isoStore.CreateFile($"notes/{note.Id}.txt"));
 			TextNote.WriteLine(note.CreationTime);
 			TextNote.WriteLine(note.Body);
 			TextNote.WriteLine(note.IsTemporal);
@@ -34,8 +33,9 @@ namespace PPO.Database
 			try
 			{
 				isoStream = new(
-					$"/note/{note.Id}.txt",
+					$"notes/{note.Id}.txt",
 					FileMode.Open,
+					FileAccess.Write,
 					_isoStore
 				);
 			}
@@ -44,7 +44,7 @@ namespace PPO.Database
 				throw new FileNotFoundException();
 			}
 
-			StreamWriter writer = new(isoStream);
+			using StreamWriter writer = new(isoStream);
 
 			writer.WriteLine(note.CreationTime);
 			writer.WriteLine(note.Body);
@@ -57,8 +57,9 @@ namespace PPO.Database
 			try
 			{
 				isoStream = new(
-					$"/note/{Id}.txt",
+					$"notes/{Id}.txt",
 					FileMode.Open,
+					FileAccess.Write,
 					_isoStore
 				);
 			}
@@ -67,7 +68,8 @@ namespace PPO.Database
 				throw new FileNotFoundException();
 			}
 
-			_isoStore.DeleteFile($"/note/{Id}.txt");
+			isoStream.Close();
+			_isoStore.DeleteFile($"notes/{Id}.txt");
 		}
 
 		public Note? GetNote(Guid Id)
@@ -75,7 +77,7 @@ namespace PPO.Database
 			string[] filelist;
 			try
 			{
-				filelist = _isoStore.GetFileNames($"/note/{Id}.txt");
+				filelist = _isoStore.GetFileNames($"notes/{Id}.txt");
 			}
 			catch
 			{
@@ -85,7 +87,12 @@ namespace PPO.Database
 			foreach (string fileName in filelist)
 				if (fileName.Equals(Id))
 				{
-					var readerStream = new StreamReader(fileName);
+					using var readerStream = new StreamReader(new IsolatedStorageFileStream(
+						$"notes/{Id}.txt",
+						FileMode.Open,
+						FileAccess.Read,
+						_isoStore
+					));
 					string? noteCreationTime = readerStream.ReadLine();
 					string? noteBody = readerStream.ReadLine();
 					string? noteIsTemporal = readerStream.ReadLine();

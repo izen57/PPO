@@ -8,7 +8,11 @@ namespace PPO.Logic {
 	public class StopwatchService: IStopwatchService {
 		static Stopwatch _stopwatch;
 
-		public StopwatchService() { }
+		public StopwatchService(Stopwatch stopwatch)
+		{
+			_stopwatch = stopwatch;
+		}
+
 		public void Set() {
 			_stopwatch.Timing.Start();
 			_stopwatch.IsWorking = true;

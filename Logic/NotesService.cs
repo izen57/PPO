@@ -25,8 +25,13 @@ namespace PPO.Logic {
 			_repository.Delete(id);
 		}
 
-		public List<Note> GetNotes(string pattern) {
+		public List<Note> GetNotesByPattern(string pattern) {
 			return _repository.GetNotesList(pattern);
+		}
+
+		public Note? GetNote(Guid guid)
+		{
+			return _repository.GetNote(guid);
 		}
 	}
 }

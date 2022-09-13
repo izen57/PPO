@@ -15,19 +15,19 @@ namespace PPO.Database
 		public AlarmClockFileRepo()
 		{
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
-			_isoStore.CreateDirectory("/alarmclocks");
+			_isoStore.CreateDirectory("alarmclocks");
 		}
 
 		public void Create(AlarmClock alarmClock)
 		{
 			if (_isoStore.AvailableFreeSpace <= 0)
 				throw new IsolatedStorageException();
-			_isoStore.CreateFile($"/alarmclocks/{alarmClock.AlarmTime}.txt");
+			string filepath = $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 
-			StreamWriter TextNote = new($"/alarmclocks/{alarmClock.AlarmTime}.txt");
-			TextNote.WriteLine(alarmClock.Name);
-			TextNote.WriteLine(alarmClock.AlarmClockColor);
-			TextNote.WriteLine(alarmClock.IsWorking);
+			using StreamWriter writer = new(_isoStore.CreateFile(filepath));
+			writer.WriteLine(alarmClock.Name);
+			writer.WriteLine(alarmClock.AlarmClockColor);
+			writer.WriteLine(alarmClock.IsWorking);
 		}
 
 		public void Edit(AlarmClock alarmClock)
@@ -36,8 +36,9 @@ namespace PPO.Database
 			try
 			{
 				isoStream = new(
-					$"/alarmclocks/{alarmClock.AlarmTime}.txt",
+					$"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt",
 					FileMode.Open,
+					FileAccess.Write,
 					_isoStore
 				);
 			}
@@ -46,7 +47,7 @@ namespace PPO.Database
 				throw new FileNotFoundException();
 			}
 
-			StreamWriter writer = new(isoStream);
+			using StreamWriter writer = new(isoStream);
 
 			writer.WriteLine(alarmClock.Name);
 			writer.WriteLine(alarmClock.AlarmClockColor);
@@ -56,11 +57,13 @@ namespace PPO.Database
 		public void Delete(DateTime alarmTime)
 		{
 			IsolatedStorageFileStream isoStream;
+			string filepath = $"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 			try
 			{
 				isoStream = new(
-					$"/alarmclocks/{alarmTime}.txt",
+					filepath,
 					FileMode.Open,
+					FileAccess.Write,
 					_isoStore
 				);
 			}
@@ -69,15 +72,17 @@ namespace PPO.Database
 				throw new FileNotFoundException();
 			}
 
-			_isoStore.DeleteFile($"/alarmclocks/{alarmTime}.txt");
+			isoStream.Close();
+			_isoStore.DeleteFile(filepath);
 		}
 
 		public AlarmClock? GetAlarmClock(DateTime alarmTime)
 		{
 			string[] filelist;
+			string filepath = $"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 			try
 			{
-				filelist = _isoStore.GetFileNames($"/alarmclocks/{alarmTime}.txt");
+				filelist = _isoStore.GetFileNames(filepath);
 			}
 			catch
 			{
@@ -85,9 +90,14 @@ namespace PPO.Database
 			}
 
 			foreach (string fileName in filelist)
-				if (fileName.Equals(alarmTime))
+				if (fileName.Equals($"{alarmTime:dd/MM/yyyy HH-mm-ss}.txt"))
 				{
-					var readerStream = new StreamReader(fileName);
+					using var readerStream = new StreamReader(new IsolatedStorageFileStream(
+						filepath,
+						FileMode.Open,
+						FileAccess.Read,
+						_isoStore
+					));
 					string? alarmClockName = readerStream.ReadLine();
 					string? alarmClockColor = readerStream.ReadLine();
 					string? alarmClockWork = readerStream.ReadLine();

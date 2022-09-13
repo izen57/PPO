@@ -23,6 +23,11 @@ namespace PPO.Logic {
 			_repository.Delete(alarmTime);
 		}
 
+		public AlarmClock? GetAlarmClock(DateTime dateTime)
+		{
+			return _repository.GetAlarmClock(dateTime);
+		}
+
 		public List<AlarmClock> GetAlarmClocks(string pattern) {
 			return _repository.GetAlarmClocksList(pattern);
 		}
