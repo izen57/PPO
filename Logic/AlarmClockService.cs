@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 
 namespace PPO.Logic {
-	public class AlarmClockService: IAlarmCLockService {
+	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
 
 		public AlarmClockService(IAlarmClockRepo repo) {
@@ -23,8 +23,13 @@ namespace PPO.Logic {
 			_repository.Delete(alarmTime);
 		}
 
+		public AlarmClock? GetAlarmClock(DateTime dateTime)
+		{
+			return _repository.GetAlarmClock(dateTime);
+		}
+
 		public List<AlarmClock> GetAlarmClocks(string pattern) {
-			return _repository.GetAlarmClocks(pattern);
+			return _repository.GetAlarmClocksList(pattern);
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {

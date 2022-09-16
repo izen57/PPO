@@ -5,11 +5,12 @@ using System.Collections.Generic;
 
 namespace PPO.Logic
 {
-	public interface IAlarmCLockService
+	public interface IAlarmClockService
 	{
 		public void Create(AlarmClock alarmCloc);
 		public void Edit(AlarmClock alarmCloc);
 		public void Delete(DateTime alarmTime);
+		public AlarmClock? GetAlarmClock(DateTime dateTime);
 		public List<AlarmClock> GetAlarmClocks(string pattern);
 		public void InvertWork(AlarmClock alarmClock);
 	}
