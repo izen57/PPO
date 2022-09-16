@@ -124,15 +124,8 @@ namespace PPO.Database
 			List<Note> noteList = new();
 			foreach (string fileName in filelist)
 			{
-				try
-				{
-					var note = GetNote(Guid.Parse(fileName));
-					noteList.Add(note!);
-				}
-				catch (Exception e)
-				{
-					throw e;
-				}
+				var note = GetNote(Guid.Parse(fileName));
+				noteList.Add(note!);
 			}
 
 			return noteList;
