@@ -6,10 +6,10 @@ namespace PPO.Logic
 {
 	public interface INotesService
 	{
-		public Note Create(Note note);
-		public void Edit(Note note);
-		public void Delete(Guid id);
-		public List<Note> GetNotesByPattern(string pattern);
-		public Note? GetNote(Guid guid);
+		Note Create(Note note);
+		void Edit(Note note);
+		void Delete(Guid id);
+		List<Note> GetNotesByPattern(string pattern);
+		Note? GetNote(Guid guid);
 	}
 }
