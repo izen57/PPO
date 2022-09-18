@@ -1,4 +1,4 @@
-﻿namespace PPO.User_Interface.AlarmClockUI
+﻿namespace PPO.User_Interface
 {
 	public interface IAlarmClockUI
 	{

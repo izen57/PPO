@@ -7,7 +7,7 @@ namespace PPO.Logic
 	public interface IStopwatchService
 	{
 		void Set();
-		void Reset();
-		void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<DateTime> timeFlags);
+		long Reset();
+		void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, SortedSet<DateTime> timeFlags);
 	}
 }

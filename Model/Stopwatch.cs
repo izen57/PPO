@@ -7,10 +7,10 @@ namespace PPO.Model {
 		public string Name { get; set; }
 		public Color StopwatchColor { get; set; }
 		public System.Diagnostics.Stopwatch Timing { get; set; }
-		public List<DateTime> TimeFlags { get; set; }
+		public SortedSet<DateTime> TimeFlags { get; set; }
 		public bool IsWorking { get; set; }
 
-		public Stopwatch(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<DateTime> timeFlags, bool isWorking) {
+		public Stopwatch(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, SortedSet<DateTime> timeFlags, bool isWorking) {
 			Name = name;
 			StopwatchColor = stopwatchColor;
 			Timing = timing;

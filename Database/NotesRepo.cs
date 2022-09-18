@@ -12,7 +12,7 @@ namespace PPO.Database
 
 		public NotesFileRepo()
 		{
-			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
+			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("notes");
 		}
 
@@ -34,7 +34,7 @@ namespace PPO.Database
 			{
 				isoStream = new(
 					$"notes/{note.Id}.txt",
-					FileMode.Open,
+					FileMode.Create,
 					FileAccess.Write,
 					_isoStore
 				);

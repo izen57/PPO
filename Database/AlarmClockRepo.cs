@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 
@@ -14,7 +15,7 @@ namespace PPO.Database
 
 		public AlarmClockFileRepo()
 		{
-			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, null, null);
+			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("alarmclocks");
 		}
 
@@ -30,14 +31,14 @@ namespace PPO.Database
 			writer.WriteLine(alarmClock.IsWorking);
 		}
 
-		public void Edit(AlarmClock alarmClock)
+		public void Edit(AlarmClock alarmClock, DateTime oldTime)
 		{
 			IsolatedStorageFileStream isoStream;
 			try
 			{
 				isoStream = new(
-					$"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt",
-					FileMode.Open,
+					$"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt",
+					FileMode.Create,
 					FileAccess.Write,
 					_isoStore
 				);
@@ -47,11 +48,13 @@ namespace PPO.Database
 				throw new FileNotFoundException();
 			}
 
-			using StreamWriter writer = new(isoStream);
-
-			writer.WriteLine(alarmClock.Name);
-			writer.WriteLine(alarmClock.AlarmClockColor);
-			writer.WriteLine(alarmClock.IsWorking);
+			using (StreamWriter writer = new(isoStream))
+			{
+				writer.WriteLine(alarmClock.Name);
+				writer.WriteLine(alarmClock.AlarmClockColor);
+				writer.WriteLine(alarmClock.IsWorking);
+			}
+			_isoStore.MoveFile($"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt", $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt");
 		}
 
 		public void Delete(DateTime alarmTime)
@@ -132,7 +135,7 @@ namespace PPO.Database
 			{
 				try
 				{
-					var alarmClock = GetAlarmClock(DateTime.Parse(fileName));
+					var alarmClock = GetAlarmClock(DateTime.Parse(fileName.Replace(".txt", "").Replace("-", ":")));
 					alarmClockList.Add(alarmClock!);
 				}
 				catch (Exception e)

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace PPO.Logic {
 	public class StopwatchService: IStopwatchService {
-		static Stopwatch _stopwatch;
+		private static Stopwatch _stopwatch;
 
 		public StopwatchService(Stopwatch stopwatch)
 		{
@@ -18,16 +18,24 @@ namespace PPO.Logic {
 			_stopwatch.IsWorking = true;
 		}
 
-		public void Reset() {
+		public long Reset() {
 			_stopwatch.Timing.Stop();
 			_stopwatch.IsWorking = false;
+
+			return _stopwatch.Timing.ElapsedMilliseconds;
+		}
+
+		public long SetFlag(DateTime dateTime)
+		{
+			_stopwatch.TimeFlags.Add(dateTime);
+			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
 		public Stopwatch Get() {
 			return _stopwatch;
 		}
 
-		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<DateTime> timeFlags) {
+		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, SortedSet<DateTime> timeFlags) {
 			_stopwatch.Name = name;
 			_stopwatch.StopwatchColor = stopwatchColor;
 			_stopwatch.Timing = timing;
