@@ -18,16 +18,21 @@ namespace PPO.Logic {
 			_stopwatch.IsWorking = true;
 		}
 
-		public long Reset() {
+		public long Stop()
+		{
 			_stopwatch.Timing.Stop();
 			_stopwatch.IsWorking = false;
-
 			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
-		public long SetFlag(DateTime dateTime)
+		public void Reset() {
+			_stopwatch.Timing.Reset();
+			_stopwatch.IsWorking = false;
+		}
+
+		public long SetFlag()
 		{
-			_stopwatch.TimeFlags.Add(dateTime);
+			_stopwatch.TimeFlags.Add(DateTime.Now);
 			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
@@ -35,11 +40,8 @@ namespace PPO.Logic {
 			return _stopwatch;
 		}
 
-		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, SortedSet<DateTime> timeFlags) {
-			_stopwatch.Name = name;
+		public void EditColor(Color stopwatchColor) {
 			_stopwatch.StopwatchColor = stopwatchColor;
-			_stopwatch.Timing = timing;
-			_stopwatch.TimeFlags = timeFlags;
 		}
 	}
 }

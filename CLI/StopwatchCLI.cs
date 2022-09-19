@@ -1,6 +1,10 @@
 ﻿using PPO.Logic;
-using PPO.Model;
+using Model = PPO.Model;
 using PPO.User_Interface;
+
+using System.Drawing;
+using SysStopwatch = System.Diagnostics;
+using System.Configuration;
 
 namespace CLI
 {
@@ -10,7 +14,13 @@ namespace CLI
 
 		public StopwatchCLI()
 		{
-			_stopwatchService = new(new Stopwatch("Секундомер", ))
+			_stopwatchService = new(new Model.Stopwatch(
+				"Секундомер",
+				Color.FromName("Red"),
+				new SysStopwatch.Stopwatch(),
+				new SortedSet<DateTime>(),
+				false
+			));
 		}
 
 		public void Exit()
@@ -22,12 +32,18 @@ namespace CLI
 		public void Menu()
 		{
 			Console.WriteLine("Секундомер:\n" +
-				$"Название: {}");
+				$"Название: {_stopwatchService.Get().Name}\n" +
+				$"Цвет: {_stopwatchService.Get().StopwatchColor}\n" +
+				$"Время: {_stopwatchService.Get().Timing.Elapsed}\n" +
+				$"Режим работы: {(_stopwatchService.Get().IsWorking == true ? "Запущен" : "Не запущен")}\n");
+			Console.WriteLine("Флаги:\n");
+			ShowFlags();
 			Console.WriteLine("\n0 - Выход из программы.\n" +
 				"1 - Запустить секундомер.\n" +
 				"2 - Сбросить секундомер.\n" +
 				"3 - Остановить секундомер.\n" +
 				"4 - Установить флаг.\n" +
+				"5 - Поменять цвет.\n" +
 				"\nВведите номер функции из списка:"
 			);
 
@@ -54,47 +70,66 @@ namespace CLI
 					Exit();
 					break;
 				case 1:
-					ShowNotes();
+					SetStopwatch();
 					Menu();
 					break;
 				case 2:
-					CreateNote();
+					ResetStopwatch();
 					Menu();
 					break;
 				case 3:
-					EditNote();
+					StopStopWatch();
 					Menu();
 					break;
 				case 4:
-					DeleteNote();
+					AddStopwatchFlag();
+					Menu();
+					break;
+				case 5:
+					EditStopwatchColor();
 					Menu();
 					break;
 			}
 		}
 
+		private void ShowFlags()
+		{
+			foreach (var elem in _stopwatchService.Get().TimeFlags)
+				Console.WriteLine(elem);
+		}
+
+		private void EditStopwatchColor()
+		{
+			Console.Write("Введите название цвета на английском: ");
+			Color color = Color.FromName(Console.ReadLine());
+			_stopwatchService.EditColor(color);
+			Console.WriteLine("Цвет изменён.");
+		}
+
 		public void ResetStopwatch()
 		{
-			throw new NotImplementedException();
+			_stopwatchService.Reset();
+			_stopwatchService.Get().TimeFlags.Clear();
+			_stopwatchService.Get().IsWorking = false;
+			Console.WriteLine("Секундомер сброшен.");
 		}
 
 		public void SetStopwatch()
 		{
-			throw new NotImplementedException();
+			_stopwatchService.Set();
+			_stopwatchService.Get().IsWorking = true;
+			Console.WriteLine("Секундомер установлен.");
 		}
 
-		public void SetStopwatchFlag()
+		public void AddStopwatchFlag()
 		{
-			throw new NotImplementedException();
-		}
-
-		public void ShowStopwatch()
-		{
-			throw new NotImplementedException();
+			Console.WriteLine($"Флаг на: {_stopwatchService.SetFlag()}.");
 		}
 
 		public void StopStopWatch()
 		{
-			throw new NotImplementedException();
+			_stopwatchService.Get().IsWorking = false;
+			Console.WriteLine($"Секундомер остановлен. Время: {_stopwatchService.Stop()}.");
 		}
 	}
 }

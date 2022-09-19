@@ -6,8 +6,7 @@
 		void SetStopwatch();
 		void ResetStopwatch();
 		void StopStopWatch();
-		void SetStopwatchFlag();
-		void ShowStopwatch();
+		void AddStopwatchFlag();
 		void Exit();
 
 	}
