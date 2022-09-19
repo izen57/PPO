@@ -4,8 +4,10 @@
 	{
 		static void Main(string[] args)
 		{
-			AlarmClockCLI alarmClockCLI = new AlarmClockCLI();
-			alarmClockCLI.Menu();
+			//AlarmClockCLI alarmClockCLI = new AlarmClockCLI();
+			//alarmClockCLI.Menu();
+			NoteCLI noteCLI = new();
+			noteCLI.Menu();
 		}
 	}
 }

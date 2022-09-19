@@ -6,7 +6,7 @@
 		void CreateNote();
 		void EditNote();
 		void DeleteNote();
-		void ShowNote();
+		void ShowNotes();
 		void Exit();
 	}
 }

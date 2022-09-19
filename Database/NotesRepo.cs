@@ -85,7 +85,7 @@ namespace PPO.Database
 			}
 
 			foreach (string fileName in filelist)
-				if (fileName.Equals(Id))
+				if (fileName.Replace(".txt", "") == Id.ToString())
 				{
 					using var readerStream = new StreamReader(new IsolatedStorageFileStream(
 						$"notes/{Id}.txt",
@@ -124,7 +124,7 @@ namespace PPO.Database
 			List<Note> noteList = new();
 			foreach (string fileName in filelist)
 			{
-				var note = GetNote(Guid.Parse(fileName));
+				var note = GetNote(Guid.Parse(fileName.Replace(".txt", "")));
 				noteList.Add(note!);
 			}
 
