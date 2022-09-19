@@ -9,7 +9,7 @@ namespace PPO.Logic
 		Note Create(Note note);
 		void Edit(Note note);
 		void Delete(Guid id);
-		List<Note> GetNotesByPattern(string pattern);
+		List<Note> GetNotesList(string pattern);
 		Note? GetNote(Guid guid);
 	}
 }

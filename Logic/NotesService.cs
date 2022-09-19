@@ -31,7 +31,7 @@ namespace PPO.Logic {
 			_repository.Delete(id);
 		}
 
-		public List<Note> GetNotesByPattern(string pattern) {
+		public List<Note> GetNotesList(string pattern) {
 			return _repository.GetNotesList(pattern);
 		}
 
@@ -42,7 +42,7 @@ namespace PPO.Logic {
 
 		private void AutoDelete(object sender, ElapsedEventArgs e)
 		{
-			foreach (Note note in GetNotesByPattern("*"))
+			foreach (Note note in GetNotesList("*"))
 				if (note.IsTemporal == true && DateTime.Now - note.CreationTime > TimeSpan.FromDays(1))
 					_repository.Delete(note.Id);
 		}

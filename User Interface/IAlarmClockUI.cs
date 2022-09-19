@@ -3,7 +3,7 @@
 	public interface IAlarmClockUI
 	{
 		void Menu();
-		void CreatAlarmClock();
+		void CreateAlarmClock();
 		void EditAlarmClock();
 		void DeleteAlarmClock();
 		void ShowAlarmClocks();

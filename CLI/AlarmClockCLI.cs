@@ -16,7 +16,7 @@ namespace CLI
 			_alarmClockService = new AlarmClockService(new AlarmClockFileRepo());
 		}
 
-		public void CreatAlarmClock()
+		public void CreateAlarmClock()
 		{
 			Console.WriteLine("Создание нового будильника. " +
 				"Введите время будильника: ");
@@ -158,7 +158,7 @@ namespace CLI
 					Menu();
 					break;
 				case 2:
-					CreatAlarmClock();
+					CreateAlarmClock();
 					Menu();
 					break;
 				case 3:
