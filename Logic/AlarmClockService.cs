@@ -1,5 +1,8 @@
 ﻿using PPO.Database;
 using PPO.Model;
+using Serilog.Core;
+using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -8,6 +11,9 @@ namespace PPO.Logic {
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
 		public Timer _checkForTime;
+		Logger _logger = new LoggerConfiguration()
+			.WriteTo.File("LogAlarmClock.txt")
+			.CreateLogger();
 
 		public AlarmClockService(IAlarmClockRepo repo) {
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
@@ -40,6 +46,8 @@ namespace PPO.Logic {
 		public void InvertWork(AlarmClock alarmClock) {
 			alarmClock.IsWorking = !alarmClock.IsWorking;
 			Edit(alarmClock, alarmClock.AlarmTime);
+
+			_logger.Information($"{DateTime.Now}: Будильник остановлен. Время будильника: {alarmClock.AlarmTime}");
 		}
 	}
 }

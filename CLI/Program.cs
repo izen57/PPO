@@ -1,9 +1,17 @@
-﻿namespace CLI
+﻿using System.IO;
+
+using Serilog;
+
+namespace CLI
 {
 	public class Program
 	{
 		static void Main(string[] args)
 		{
+			var logger = new LoggerConfiguration()
+				.WriteTo.File("LogProgram.txt") // Console()
+				.CreateLogger();
+
 			Console.WriteLine("0 - Выход.\n" +
 				"1 - Будильники.\n" +
 				"2 - Заметки.\n" +
@@ -31,19 +39,23 @@
 			{
 				case 0:
 					Console.WriteLine("Выход из приложения...");
+					logger.Debug($"{DateTime.Now}: Осуществлён выход из приложения.");
 					Environment.Exit(0);
 					break;
 				case 1:
 					AlarmClockCLI alarmClockCLI = new();
 					alarmClockCLI.Menu();
+					logger.Debug($"{DateTime.Now}: Выбран пункт будильников.");
 					break;
 				case 2:
 					NoteCLI noteCLI = new();
 					noteCLI.Menu();
+					logger.Debug($"{DateTime.Now}: Выбран пункт заметок.");
 					break;
 				case 3:
 					StopwatchCLI stopwatchCLI = new();
 					stopwatchCLI.Menu();
+					logger.Debug($"{DateTime.Now}: Выбран пункт секундомера.");
 					break;
 			}
 		}

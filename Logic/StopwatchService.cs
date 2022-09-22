@@ -1,11 +1,17 @@
 ﻿using PPO.Model;
 
+using Serilog.Core;
+using Serilog;
+
 using System;
 using System.Drawing;
 
 namespace PPO.Logic {
 	public class StopwatchService: IStopwatchService {
-		private static Stopwatch _stopwatch;
+		static Stopwatch _stopwatch;
+		Logger _logger = new LoggerConfiguration()
+			.WriteTo.File("LogStopwatch.txt")
+			.CreateLogger();
 
 		public StopwatchService(Stopwatch stopwatch)
 		{
@@ -15,17 +21,25 @@ namespace PPO.Logic {
 		public void Set() {
 			_stopwatch.Timing.Start();
 			_stopwatch.IsWorking = true;
+
+			_logger.Information($"{DateTime.Now}: Секундомер запущен.");
 		}
 
 		public long Stop()
 		{
 			_stopwatch.Timing.Stop();
 			_stopwatch.IsWorking = false;
+
+			_logger.Information($"{DateTime.Now}: Секундомер остановлен.");
+
 			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
 		public void Reset() {
 			_stopwatch.Timing.Reset();
+
+			_logger.Information($"{DateTime.Now}: Секундомер сброшен.");
+
 			_stopwatch.IsWorking = false;
 		}
 
@@ -41,6 +55,8 @@ namespace PPO.Logic {
 
 		public void EditColor(Color stopwatchColor) {
 			_stopwatch.StopwatchColor = stopwatchColor;
+
+			_logger.Information($"{DateTime.Now}: Цвет секундомера изменён.");
 		}
 	}
 }

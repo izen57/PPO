@@ -1,5 +1,8 @@
 ﻿using PPO.Database;
 using PPO.Model;
+using Serilog.Core;
+using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -8,6 +11,9 @@ namespace PPO.Logic {
 	public class NotesService: INotesService {
 		INotesRepo _repository;
 		Timer _checkForTime;
+		Logger _logger = new LoggerConfiguration()
+			.WriteTo.File("LogNote.txt")
+			.CreateLogger();
 
 		public NotesService(INotesRepo repo) {
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
@@ -44,7 +50,10 @@ namespace PPO.Logic {
 		{
 			foreach (Note note in GetNotesList("*"))
 				if (note.IsTemporal == true && DateTime.Now - note.CreationTime > TimeSpan.FromDays(1))
+				{
+					_logger.Information($"{DateTime.Now}: Заметка удалена автоматически по истечении срока. Идентификатор заметки: {note.Id}.");
 					_repository.Delete(note.Id);
+				}
 		}
 	}
 }

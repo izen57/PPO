@@ -3,32 +3,48 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
+
+using Serilog;
+using Serilog.Core;
 
 namespace PPO.Database
 {
 	public class AlarmClockFileRepo: IAlarmClockRepo
 	{
 		IsolatedStorageFile _isoStore;
+		Logger _logger = new LoggerConfiguration()
+			.WriteTo.File("LogAlarmClock.txt")
+			.CreateLogger();
 
 		public AlarmClockFileRepo()
 		{
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("alarmclocks");
+			_logger.Error($"{DateTime.Now}: Создана папка для будильников.");
 		}
 
 		public void Create(AlarmClock alarmClock)
 		{
 			if (_isoStore.AvailableFreeSpace <= 0)
+			{
+				_logger.Error($"{DateTime.Now}: Место в защищённом хранилище будильников закончилось.");
 				throw new IsolatedStorageException();
+			}
 			string filepath = $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 
 			using StreamWriter writer = new(_isoStore.CreateFile(filepath));
 			writer.WriteLine(alarmClock.Name);
 			writer.WriteLine(alarmClock.AlarmClockColor.Name);
 			writer.WriteLine(alarmClock.IsWorking);
+
+			_logger.Information($"{DateTime.Now}: Создан файл будильника со следующей информацией:" +
+				$"{alarmClock.Name}," +
+				$"{alarmClock.AlarmTime}," +
+				$"{alarmClock.AlarmClockColor.Name}," +
+				$"{alarmClock.IsWorking}."
+			);
 		}
 
 		public void Edit(AlarmClock alarmClock, DateTime oldTime)
@@ -45,6 +61,7 @@ namespace PPO.Database
 			}
 			catch
 			{
+				_logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
 				throw new FileNotFoundException();
 			}
 
@@ -54,7 +71,20 @@ namespace PPO.Database
 				writer.WriteLine(alarmClock.AlarmClockColor.Name);
 				writer.WriteLine(alarmClock.IsWorking);
 			}
+
+			_logger.Information($"{DateTime.Now}: Изменён файл будильника следующей информацией:" +
+				$"{alarmClock.Name}," +
+				$"{alarmClock.AlarmTime}," +
+				$"{alarmClock.AlarmClockColor.Name}," +
+				$"{alarmClock.IsWorking}."
+			);
+
 			_isoStore.MoveFile($"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt", $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt");
+
+			_logger.Information($"{DateTime.Now}: Файл будильника переименован.\n " +
+				$"Старое название файла: \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\".\n" +
+				$"Новое название файла: \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\"."
+			);
 		}
 
 		public void Delete(DateTime alarmTime)
@@ -72,11 +102,14 @@ namespace PPO.Database
 			}
 			catch
 			{
+				_logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
 				throw new FileNotFoundException();
 			}
 
 			isoStream.Close();
 			_isoStore.DeleteFile(filepath);
+
+			_logger.Information($"{DateTime.Now}: Удалён файл будильника. Время будильника: {alarmTime}.");
 		}
 
 		public AlarmClock? GetAlarmClock(DateTime alarmTime)
@@ -89,6 +122,7 @@ namespace PPO.Database
 			}
 			catch
 			{
+				_logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
 				throw new DirectoryNotFoundException();
 			}
 
@@ -105,7 +139,10 @@ namespace PPO.Database
 					string? alarmClockColor = readerStream.ReadLine();
 					string? alarmClockWork = readerStream.ReadLine();
 					if (alarmClockName == null || alarmClockColor == null || alarmClockWork == null)
+					{
+						_logger.Error($"{DateTime.Now}: Ошибка разметки файла будильника. Время будильника: {alarmTime}.");
 						throw new ArgumentNullException();
+					}
 
 					return new AlarmClock(
 						alarmTime,
@@ -127,21 +164,15 @@ namespace PPO.Database
 			}
 			catch
 			{
+				_logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
 				throw new DirectoryNotFoundException();
 			}
 
 			List<AlarmClock> alarmClockList = new();
 			foreach (string fileName in filelist)
 			{
-				try
-				{
-					var alarmClock = GetAlarmClock(DateTime.Parse(fileName.Replace(".txt", "").Replace("-", ":")));
-					alarmClockList.Add(alarmClock!);
-				}
-				catch (Exception e)
-				{
-					throw e;
-				}
+				var alarmClock = GetAlarmClock(DateTime.Parse(fileName.Replace(".txt", "").Replace("-", ":")));
+				alarmClockList.Add(alarmClock!);
 			}
 
 			return alarmClockList;
