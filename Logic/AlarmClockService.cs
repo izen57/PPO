@@ -5,21 +5,16 @@ using Serilog;
 
 using System;
 using System.Collections.Generic;
-using System.Timers;
 
 namespace PPO.Logic {
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
-		public Timer _checkForTime;
 		Logger _logger = new LoggerConfiguration()
 			.WriteTo.File("LogAlarmClock.txt")
 			.CreateLogger();
 
 		public AlarmClockService(IAlarmClockRepo repo) {
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
-
-			_checkForTime = new(60 * 1000);
-			_checkForTime.Enabled = true;
 		}
 
 		public void Create(AlarmClock alarmClock) {

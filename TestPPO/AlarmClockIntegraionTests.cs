@@ -21,7 +21,7 @@ namespace TestPPO
 			Assert.IsNotNull(alarmClockService.GetAlarmClock(dateTime), "AlarmClockCreate");
 
 			AlarmClock check2 = new(dateTime, "check2", Color.FromName("yellow"), false);
-			alarmClockService.Edit(check2);
+			alarmClockService.Edit(check2, dateTime);
 			Assert.IsNotNull(alarmClockService.GetAlarmClock(dateTime), "AlarmClockCreate");
 
 			alarmClockService.Delete(dateTime);

@@ -6,15 +6,19 @@ using PPO.Logic;
 using PPO.Model;
 using PPO.User_Interface;
 
+using Timer = System.Timers.Timer;
+
 namespace CLI
 {
 	public class AlarmClockCLI: IAlarmClockUI
 	{
-		private IAlarmClockService _alarmClockService;
+		IAlarmClockService _alarmClockService;
+		Timer _checkForTime = new (60 * 1000);
 
 		public AlarmClockCLI()
 		{
 			_alarmClockService = new AlarmClockService(new AlarmClockFileRepo());
+			_checkForTime.Enabled = true;
 		}
 
 		public void CreateAlarmClock()
@@ -124,7 +128,7 @@ namespace CLI
 
 		public void Menu()
 		{
-			_alarmClockService._checkForTime.Elapsed += new ElapsedEventHandler(AlarmClockSignal);
+			_checkForTime.Elapsed += new ElapsedEventHandler(AlarmClockSignal);
 			Console.WriteLine("\n0 - Выход из программы.\n" +
 				"1 - Показать все будильники.\n" +
 				"2 - Установить новый будильник.\n" +
