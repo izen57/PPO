@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Timers;
 
 using PPO.Database;
 using PPO.Logic;
@@ -123,6 +124,7 @@ namespace CLI
 
 		public void Menu()
 		{
+			_alarmClockService._checkForTime.Elapsed += new ElapsedEventHandler(AlarmClockSignal);
 			Console.WriteLine("\n0 - Выход из программы.\n" +
 				"1 - Показать все будильники.\n" +
 				"2 - Установить новый будильник.\n" +
@@ -172,6 +174,26 @@ namespace CLI
 			}
 		}
 
+		private ConsoleColor FromColor(Color c)
+		{
+			int index = c.R > 128 | c.G > 128 | c.B > 128 ? 8 : 0; // Bright bit
+			index |= c.R > 64 ? 4 : 0; // Red bit
+			index |= c.G > 64 ? 2 : 0; // Green bit
+			index |= c.B > 64 ? 1 : 0; // Blue bit
+			return (ConsoleColor) index;
+		}
+
+		public void AlarmClockSignal(object sender, ElapsedEventArgs e)
+		{
+			foreach (var alarmClock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
+				if (DateTime.Now >= alarmClock.AlarmTime)
+					for (int i = 0; i < 10; ++i)
+					{
+						Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
+						Console.BackgroundColor = ConsoleColor.Black;
+					}
+		}
+
 		public void ShowAlarmClocks()
 		{
 			Console.WriteLine("Список всех будильников\n" +
@@ -180,7 +202,7 @@ namespace CLI
 			foreach (var alarmclock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
 				Console.WriteLine($"\nВремя: {alarmclock.AlarmTime}\n" +
 					$"Название: {alarmclock.Name}\n" +
-					$"Цвет: {alarmclock.AlarmClockColor}\n" +
+					$"Цвет: {alarmclock.AlarmClockColor.Name}\n" +
 					$"Режим: {(alarmclock.IsWorking == true ? "включён" : "выключен")}"
 				);
 

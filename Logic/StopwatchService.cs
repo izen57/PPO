@@ -2,7 +2,6 @@
 
 using System;
 using System.Drawing;
-using System.Collections.Generic;
 
 namespace PPO.Logic {
 	public class StopwatchService: IStopwatchService {

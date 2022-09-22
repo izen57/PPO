@@ -27,7 +27,7 @@ namespace PPO.Database
 
 			using StreamWriter writer = new(_isoStore.CreateFile(filepath));
 			writer.WriteLine(alarmClock.Name);
-			writer.WriteLine(alarmClock.AlarmClockColor);
+			writer.WriteLine(alarmClock.AlarmClockColor.Name);
 			writer.WriteLine(alarmClock.IsWorking);
 		}
 
@@ -51,7 +51,7 @@ namespace PPO.Database
 			using (StreamWriter writer = new(isoStream))
 			{
 				writer.WriteLine(alarmClock.Name);
-				writer.WriteLine(alarmClock.AlarmClockColor);
+				writer.WriteLine(alarmClock.AlarmClockColor.Name);
 				writer.WriteLine(alarmClock.IsWorking);
 			}
 			_isoStore.MoveFile($"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt", $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt");

@@ -7,7 +7,7 @@ using System.Timers;
 namespace PPO.Logic {
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
-		Timer _checkForTime;
+		public Timer _checkForTime;
 
 		public AlarmClockService(IAlarmClockRepo repo) {
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));

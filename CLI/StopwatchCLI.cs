@@ -4,7 +4,6 @@ using PPO.User_Interface;
 
 using System.Drawing;
 using SysStopwatch = System.Diagnostics;
-using System.Configuration;
 
 namespace CLI
 {
