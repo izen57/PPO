@@ -7,11 +7,11 @@ namespace CLI
 {
 	public class NoteCLI: INoteUI
 	{
-		private NotesService _notesService;
+		private INoteService _noteService;
 
 		public NoteCLI()
 		{
-			_notesService = new NotesService(new NotesFileRepo());
+			_noteService = new NoteService(new NoteFileRepo());
 		}
 
 		public void CreateNote()
@@ -28,7 +28,7 @@ namespace CLI
 			bool isTemporal = Console.ReadLine() == "y";
 
 			Guid guid = Guid.NewGuid();
-			_notesService.Create(new Note(guid, noteBody, isTemporal));
+			_noteService.Create(new Note(guid, noteBody, isTemporal));
 			DateTime noteCreationDateTime = DateTime.Now;
 			Console.WriteLine("\nЗаметка сохранена.\n\n" +
 				$"Уникальный идентификатор: {guid}" +
@@ -45,10 +45,10 @@ namespace CLI
 			Guid guid = Guid.Parse(Console.ReadLine());
 
 			bool flag = false;
-			foreach (var note in _notesService.GetNotesList("notes/*"))
+			foreach (var note in _noteService.GetNotesList("notes/*"))
 				if (guid == note.Id)
 				{
-					_notesService.Delete(guid);
+					_noteService.Delete(guid);
 					flag = true;
 				}
 
@@ -65,11 +65,11 @@ namespace CLI
 			Guid guid = Guid.Parse(Console.ReadLine());
 
 			bool flag = false;
-			foreach (var note in _notesService.GetNotesList("notes/*"))
+			foreach (var note in _noteService.GetNotesList("notes/*"))
 				if (guid == note.Id)
 				{
 					ChooseNoteParam(note);
-					_notesService.Edit(note);
+					_noteService.Edit(note);
 					flag = true;
 				}
 
@@ -175,7 +175,7 @@ namespace CLI
 		public void ShowNotes()
 		{
 			Console.WriteLine("Список всех заметок\n============");
-			foreach (var note in _notesService.GetNotesList("notes/*"))
+			foreach (var note in _noteService.GetNotesList("notes/*"))
 				Console.WriteLine($"\nУникальный идентификатор: {note.Id}\n" +
 					$"Дата и время создания: {note.CreationTime}\n" +
 					$"Текст заметки: {note.Body}\n" +

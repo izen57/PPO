@@ -8,6 +8,5 @@
 		void StopStopWatch();
 		void AddStopwatchFlag();
 		void Exit();
-
 	}
 }

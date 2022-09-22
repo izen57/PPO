@@ -15,7 +15,7 @@ namespace PPO.Model {
 			IsTemporal = isTemporal;
 		}
 
-		TimeSpan RemovalTime() {
+		public TimeSpan RemovalTime() {
 			return DateTime.Now - CreationTime;
 		}
 	}

@@ -8,14 +8,14 @@ using Serilog;
 
 namespace PPO.Database
 {
-	public class NotesFileRepo: INotesRepo
+	public class NoteFileRepo: INoteRepo
 	{
 		IsolatedStorageFile _isoStore;
 		Logger _logger = new LoggerConfiguration()
 			.WriteTo.File("LogNote.txt")
 			.CreateLogger();
 
-		public NotesFileRepo()
+		public NoteFileRepo()
 		{
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("notes");

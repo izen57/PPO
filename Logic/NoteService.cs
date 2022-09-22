@@ -8,14 +8,14 @@ using System.Collections.Generic;
 using System.Timers;
 
 namespace PPO.Logic {
-	public class NotesService: INotesService {
-		INotesRepo _repository;
+	public class NoteService: INoteService {
+		INoteRepo _repository;
 		Timer _checkForTime;
 		Logger _logger = new LoggerConfiguration()
 			.WriteTo.File("LogNote.txt")
 			.CreateLogger();
 
-		public NotesService(INotesRepo repo) {
+		public NoteService(INoteRepo repo) {
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
 
 			_checkForTime = new(60 * 1000);
@@ -23,10 +23,8 @@ namespace PPO.Logic {
 			_checkForTime.Enabled = true;
 		}
 
-		public Note Create(Note note) {
+		public void Create(Note note) {
 			_repository.Create(note);
-
-			return note;
 		}
 
 		public void Edit(Note note) {

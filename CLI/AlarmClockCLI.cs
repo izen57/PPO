@@ -10,7 +10,7 @@ namespace CLI
 {
 	public class AlarmClockCLI: IAlarmClockUI
 	{
-		private AlarmClockService _alarmClockService;
+		private IAlarmClockService _alarmClockService;
 
 		public AlarmClockCLI()
 		{
