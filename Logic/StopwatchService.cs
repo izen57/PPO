@@ -1,4 +1,4 @@
-﻿using PPO.Model;
+﻿using Model;
 
 using Serilog.Core;
 using Serilog;
@@ -6,7 +6,7 @@ using Serilog;
 using System;
 using System.Drawing;
 
-namespace PPO.Logic {
+namespace Logic {
 	public class StopwatchService: IStopwatchService {
 		static Stopwatch _stopwatch;
 		Logger _logger = new LoggerConfiguration()

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Drawing;
-using System.Collections.Generic;
+﻿using System.Drawing;
 
-namespace PPO.Model {
+namespace Model {
 	public class Stopwatch {
 		public string Name { get; set; }
 		public Color StopwatchColor { get; set; }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PPO.Model {
+﻿namespace Model {
 	public class Note {
 		public Guid Id { get; private set; }
 		public DateTime CreationTime { get; } = DateTime.Now;

@@ -1,12 +1,9 @@
-﻿using PPO.Model;
-using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using Model;
 using System.IO.IsolatedStorage;
 using Serilog.Core;
 using Serilog;
 
-namespace PPO.Database
+namespace Data
 {
 	public class NoteFileRepo: INoteRepo
 	{

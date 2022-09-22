@@ -1,12 +1,12 @@
-﻿using PPO.Database;
-using PPO.Model;
+﻿using Data;
+using Model;
 using Serilog.Core;
 using Serilog;
 
 using System;
 using System.Collections.Generic;
 
-namespace PPO.Logic {
+namespace Logic {
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
 		Logger _logger = new LoggerConfiguration()

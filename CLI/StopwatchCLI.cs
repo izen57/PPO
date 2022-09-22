@@ -1,8 +1,10 @@
-﻿using PPO.Logic;
-using Model = PPO.Model;
-using PPO.User_Interface;
+﻿using Logic;
+using Model;
 
 using System.Drawing;
+
+using User_Interface;
+
 using SysStopwatch = System.Diagnostics;
 
 namespace CLI
@@ -13,7 +15,7 @@ namespace CLI
 
 		public StopwatchCLI()
 		{
-			_stopwatchService = new StopwatchService(new Model.Stopwatch(
+			_stopwatchService = new StopwatchService(new Stopwatch(
 				"Секундомер",
 				Color.FromName("Red"),
 				new SysStopwatch.Stopwatch(),

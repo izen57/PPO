@@ -1,16 +1,13 @@
-﻿using PPO.Database;
-using PPO.Model;
+﻿using Data;
+using Model;
 using Serilog.Core;
 using Serilog;
-
-using System;
-using System.Collections.Generic;
 using System.Timers;
 
-namespace PPO.Logic {
+namespace Logic {
 	public class NoteService: INoteService {
 		INoteRepo _repository;
-		Timer _checkForTime;
+		System.Timers.Timer _checkForTime;
 		Logger _logger = new LoggerConfiguration()
 			.WriteTo.File("LogNote.txt")
 			.CreateLogger();

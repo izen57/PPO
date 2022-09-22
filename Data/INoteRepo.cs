@@ -1,8 +1,6 @@
-﻿using PPO.Model;
-using System;
-using System.Collections.Generic;
+﻿using Model;
 
-namespace PPO.Database {
+namespace Data {
 	public interface INoteRepo {
 		void Create(Note note);
 		void Edit(Note note);

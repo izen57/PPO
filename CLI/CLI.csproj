@@ -5,12 +5,21 @@
     <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <BaseOutputPath>E:\temp\CLI</BaseOutputPath>
+    <BaseIntermediateOutputPath>E:\temp\CLI</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="User Interface\**" />
-    <EmbeddedResource Remove="User Interface\**" />
-    <None Remove="User Interface\**" />
+    <Compile Remove="UserInterface\**" />
+    <EmbeddedResource Remove="UserInterface\**" />
+    <None Remove="UserInterface\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="AlarmClockCLI.cs" />
+    <Compile Include="NoteCLI.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="StopwatchCLI.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PPO.csproj" />
+    <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\Logic\Logic.csproj" />
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\User Interface\UserInterface.csproj" />
   </ItemGroup>
 
 </Project>

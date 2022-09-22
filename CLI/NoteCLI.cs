@@ -1,7 +1,8 @@
-﻿using PPO.Database;
-using PPO.Logic;
-using PPO.Model;
-using PPO.User_Interface;
+﻿using Data;
+using Logic;
+using Model;
+
+using User_Interface;
 
 namespace CLI
 {

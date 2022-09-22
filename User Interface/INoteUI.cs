@@ -1,4 +1,4 @@
-﻿namespace PPO.User_Interface
+﻿namespace User_Interface
 {
 	public interface INoteUI
 	{

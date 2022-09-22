@@ -1,8 +1,6 @@
-﻿using PPO.Model;
-using System.Collections.Generic;
-using System;
+﻿using Model;
 
-namespace PPO.Logic
+namespace Logic
 {
 	public interface INoteService
 	{

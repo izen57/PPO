@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-using Serilog;
+﻿using Serilog;
 
 namespace CLI
 {

@@ -1,9 +1,6 @@
-﻿using PPO.Model;
+﻿using Model;
 
-using System;
-using System.Collections.Generic;
-
-namespace PPO.Logic
+namespace Logic
 {
 	public interface IAlarmClockService
 	{

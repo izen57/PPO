@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
-using PPO.Model;
+using Model;
 
-namespace PPO.Logic
+namespace Logic
 {
 	public interface IStopwatchService
 	{

@@ -1,6 +1,6 @@
-﻿using PPO.Database;
-using PPO.Logic;
-using PPO.Model;
+﻿using Data;
+using Logic;
+using Model;
 
 using System.Drawing;
 

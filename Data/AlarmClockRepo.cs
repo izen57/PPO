@@ -1,15 +1,11 @@
-﻿using PPO.Model;
-
-using System;
-using System.Collections.Generic;
+﻿using Model;
 using System.Drawing;
-using System.IO;
 using System.IO.IsolatedStorage;
 
 using Serilog;
 using Serilog.Core;
 
-namespace PPO.Database
+namespace Data
 {
 	public class AlarmClockFileRepo: IAlarmClockRepo
 	{
