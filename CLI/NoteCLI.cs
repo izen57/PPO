@@ -7,7 +7,7 @@ namespace CLI
 {
 	public class NoteCLI: INoteUI
 	{
-		private NotesService _notesService;
+		private INotesService _notesService;
 
 		public NoteCLI()
 		{

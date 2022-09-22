@@ -9,11 +9,11 @@ namespace CLI
 {
 	public class StopwatchCLI: IStopwatchUI
 	{
-		private StopwatchService _stopwatchService;
+		private IStopwatchService _stopwatchService;
 
 		public StopwatchCLI()
 		{
-			_stopwatchService = new(new Model.Stopwatch(
+			_stopwatchService = new StopwatchService(new Model.Stopwatch(
 				"Секундомер",
 				Color.FromName("Red"),
 				new SysStopwatch.Stopwatch(),
