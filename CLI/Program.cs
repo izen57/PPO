@@ -7,7 +7,7 @@ namespace CLI
 		static void Main(string[] args)
 		{
 			var logger = new LoggerConfiguration()
-				.WriteTo.File("LogProgram.txt") // Console()
+				.WriteTo.File("LogProgram.txt")
 				.CreateLogger();
 
 			Console.WriteLine("0 - Выход.\n" +

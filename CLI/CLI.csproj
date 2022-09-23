@@ -7,6 +7,8 @@
     <Nullable>enable</Nullable>
     <BaseOutputPath>E:\temp\CLI</BaseOutputPath>
     <BaseIntermediateOutputPath>E:\temp\CLI</BaseIntermediateOutputPath>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>E:\temp\sgclikey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

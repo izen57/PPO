@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>E:\temp\modelkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
 </Project>
