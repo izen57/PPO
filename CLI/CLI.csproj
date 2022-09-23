@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <BaseOutputPath>E:\temp\CLI</BaseOutputPath>
     <BaseIntermediateOutputPath>E:\temp\CLI</BaseIntermediateOutputPath>
-    <SignAssembly>True</SignAssembly>
+    <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile>E:\temp\sgclikey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 

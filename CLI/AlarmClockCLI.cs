@@ -14,7 +14,7 @@ namespace CLI
 	public class AlarmClockCLI: IAlarmClockUI
 	{
 		IAlarmClockService _alarmClockService;
-		Timer _checkForTime = new (60 * 1000);
+		Timer _checkForTime = new(60 * 1000);
 
 		public AlarmClockCLI()
 		{

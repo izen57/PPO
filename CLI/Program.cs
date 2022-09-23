@@ -56,6 +56,7 @@ namespace CLI
 					logger.Debug($"{DateTime.Now}: Выбран пункт секундомера.");
 					break;
 			}
+			Log.CloseAndFlush();
 		}
 	}
 }

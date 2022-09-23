@@ -19,6 +19,7 @@ namespace Data
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("alarmclocks");
 			_logger.Error($"{DateTime.Now}: Создана папка для будильников.");
+			Log.CloseAndFlush();
 		}
 
 		public void Create(AlarmClock alarmClock)
@@ -26,7 +27,7 @@ namespace Data
 			if (_isoStore.AvailableFreeSpace <= 0)
 			{
 				_logger.Error($"{DateTime.Now}: Место в защищённом хранилище будильников закончилось.");
-				throw new IsolatedStorageException();
+				throw new IOException();
 			}
 			string filepath = $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 
@@ -41,6 +42,7 @@ namespace Data
 				$"{alarmClock.AlarmClockColor.Name}," +
 				$"{alarmClock.IsWorking}."
 			);
+			Log.CloseAndFlush();
 		}
 
 		public void Edit(AlarmClock alarmClock, DateTime oldTime)
@@ -58,7 +60,7 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
-				throw new FileNotFoundException();
+				throw new IOException();
 			}
 
 			using (StreamWriter writer = new(isoStream))
@@ -81,6 +83,7 @@ namespace Data
 				$"Старое название файла: \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\".\n" +
 				$"Новое название файла: \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\"."
 			);
+			Log.CloseAndFlush();
 		}
 
 		public void Delete(DateTime alarmTime)
@@ -99,13 +102,15 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
-				throw new FileNotFoundException();
+				throw new IOException();
 			}
 
 			isoStream.Close();
 			_isoStore.DeleteFile(filepath);
 
 			_logger.Information($"{DateTime.Now}: Удалён файл будильника. Время будильника: {alarmTime}.");
+
+			Log.CloseAndFlush();
 		}
 
 		public AlarmClock? GetAlarmClock(DateTime alarmTime)
@@ -119,7 +124,7 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
-				throw new DirectoryNotFoundException();
+				throw new IOException();
 			}
 
 			foreach (string fileName in filelist)
@@ -147,6 +152,7 @@ namespace Data
 						bool.Parse(alarmClockWork)
 					);
 				}
+			Log.CloseAndFlush();
 
 			return null;
 		}
@@ -161,7 +167,7 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
-				throw new DirectoryNotFoundException();
+				throw new IOException();
 			}
 
 			List<AlarmClock> alarmClockList = new();
@@ -170,6 +176,7 @@ namespace Data
 				var alarmClock = GetAlarmClock(DateTime.Parse(fileName.Replace(".txt", "").Replace("-", ":")));
 				alarmClockList.Add(alarmClock!);
 			}
+			Log.CloseAndFlush();
 
 			return alarmClockList;
 		}

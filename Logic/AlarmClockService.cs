@@ -3,9 +3,6 @@ using Model;
 using Serilog.Core;
 using Serilog;
 
-using System;
-using System.Collections.Generic;
-
 namespace Logic {
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;

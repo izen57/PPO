@@ -17,6 +17,7 @@ namespace Data
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("notes");
 			_logger.Information($"{DateTime.Now}: Создана папка для заметок.");
+			Log.CloseAndFlush();
 		}
 
 		public void Create(Note note)
@@ -24,7 +25,7 @@ namespace Data
 			if (_isoStore.AvailableFreeSpace <= 0)
 			{
 				_logger.Error($"{DateTime.Now}: Место в папке заметок закончилось.");
-				throw new IsolatedStorageException();
+				throw new IOException();
 			}
 
 			using StreamWriter TextNote = new(_isoStore.CreateFile($"notes/{note.Id}.txt"));
@@ -37,6 +38,7 @@ namespace Data
 				$"{note.Body}," +
 				$"{note.IsTemporal}."
 			);
+			Log.CloseAndFlush();
 		}
 
 		public void Edit(Note note)
@@ -54,7 +56,7 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Файл с названием \"notes/{note.Id}.txt\" не найден.");
-				throw new FileNotFoundException();
+				throw new IOException();
 			}
 
 			using StreamWriter writer = new(isoStream);
@@ -69,6 +71,7 @@ namespace Data
 				$"{note.Body}," +
 				$"{note.IsTemporal}."
 			);
+			Log.CloseAndFlush();
 		}
 
 		public void Delete(Guid Id)
@@ -86,13 +89,14 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Файл с названием \"notes/{Id}.txt\" не найден.");
-				throw new FileNotFoundException();
+				throw new IOException();
 			}
 
 			isoStream.Close();
 			_isoStore.DeleteFile($"notes/{Id}.txt");
 
 			_logger.Information($"{DateTime.Now}: Удалён файл заметки. Идентификатор заметки: {Id}.");
+			Log.CloseAndFlush();
 		}
 
 		public Note? GetNote(Guid Id)
@@ -105,7 +109,7 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Папка для заметок в защищённом хранилище не найдена.");
-				throw new DirectoryNotFoundException();
+				throw new IOException();
 			}
 
 			foreach (string fileName in filelist)
@@ -132,6 +136,7 @@ namespace Data
 						bool.Parse(noteIsTemporal)
 					);
 				}
+			Log.CloseAndFlush();
 
 			return null;
 		}
@@ -146,7 +151,7 @@ namespace Data
 			catch
 			{
 				_logger.Error($"{DateTime.Now}: Папка для заметок в защищённом хранилище не найдена.");
-				throw new DirectoryNotFoundException();
+				throw new IOException();
 			}
 
 			List<Note> noteList = new();
@@ -155,6 +160,7 @@ namespace Data
 				var note = GetNote(Guid.Parse(fileName.Replace(".txt", "")));
 				noteList.Add(note!);
 			}
+			Log.CloseAndFlush();
 
 			return noteList;
 		}
