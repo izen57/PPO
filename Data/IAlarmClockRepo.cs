@@ -1,6 +1,6 @@
 ﻿using Model;
 
-namespace Data {
+namespace Repositories {
 	public interface IAlarmClockRepo {
 		void Create(AlarmClock alarmClock);
 		void Edit(AlarmClock alarmClock, DateTime oldTime);

@@ -4,8 +4,10 @@ using System.IO.IsolatedStorage;
 
 using Serilog;
 using Serilog.Core;
+using Exceptions.AlarmClockExceptions;
+using Repositories;
 
-namespace Data
+namespace RepositoriesImplementations
 {
 	public class AlarmClockFileRepo: IAlarmClockRepo
 	{
@@ -27,7 +29,10 @@ namespace Data
 			if (_isoStore.AvailableFreeSpace <= 0)
 			{
 				_logger.Error($"{DateTime.Now}: Место в защищённом хранилище будильников закончилось.");
-				throw new IOException();
+				throw new AlarmClockCreateException(
+					"AlarmClockCreate: Место в защищённом хранилище будильников закончилось.",
+					new IsolatedStorageException()
+				);
 			}
 			string filepath = $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 
@@ -57,10 +62,13 @@ namespace Data
 					_isoStore
 				);
 			}
-			catch
+			catch (Exception ex)
 			{
 				_logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
-				throw new IOException();
+				throw new AlarmClockEditException(
+					$"AlarmClockEdit: Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.",
+					ex
+				);
 			}
 
 			using (StreamWriter writer = new(isoStream))
@@ -99,10 +107,13 @@ namespace Data
 					_isoStore
 				);
 			}
-			catch
+			catch (Exception ex)
 			{
 				_logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
-				throw new IOException();
+				throw new AlarmClockDeleteException(
+					$"AlarmClockDelete: Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.",
+					ex
+				);
 			}
 
 			isoStream.Close();
@@ -121,10 +132,13 @@ namespace Data
 			{
 				filelist = _isoStore.GetFileNames(filepath);
 			}
-			catch
+			catch (Exception ex)
 			{
 				_logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
-				throw new IOException();
+				throw new AlarmClockGetException(
+					"AlarmClockGet: Папка для будильников в защищённом хранилище не найдена.",
+					ex
+				);
 			}
 
 			foreach (string fileName in filelist)
@@ -164,10 +178,13 @@ namespace Data
 			{
 				filelist = _isoStore.GetFileNames(pattern);
 			}
-			catch
+			catch (Exception ex)
 			{
 				_logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
-				throw new IOException();
+				throw new AlarmClockGetException(
+					"AlarmClockGet: Папка для будильников в защищённом хранилище не найдена.",
+					ex
+				);
 			}
 
 			List<AlarmClock> alarmClockList = new();

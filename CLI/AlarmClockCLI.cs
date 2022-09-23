@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Timers;
 
-using Data;
+using RepositoriesImplementations;
 using Logic;
 using Model;
 
@@ -34,7 +34,16 @@ namespace CLI
 			Console.WriteLine("Запустить будильник сейчас (y/n): ");
 			bool isWorking = Console.ReadLine() == "y";
 
-			_alarmClockService.Create(new AlarmClock(alarmTime, alarmName, alarmColor, isWorking));
+			try
+			{
+				_alarmClockService.Create(new AlarmClock(alarmTime, alarmName, alarmColor, isWorking));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				Environment.Exit(1);
+			}
+
 			Console.WriteLine("Будильник создан.\n\n" +
 				$"Время (дд/ММ/гггг ЧЧ-мм-сс): {alarmTime}\n" +
 				$"Название: {alarmName}\n" +
@@ -53,7 +62,16 @@ namespace CLI
 			foreach (var alarmClock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
 				if (dateTime == alarmClock.AlarmTime)
 				{
-					_alarmClockService.Delete(dateTime);
+					try
+					{
+						_alarmClockService.Delete(dateTime);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine(ex.Message);
+						Environment.Exit(1);
+					}
+
 					flag = true;
 				}
 
@@ -74,7 +92,15 @@ namespace CLI
 				if (dateTime == alarmClock.AlarmTime)
 				{
 					ChooseAlarmClockParam(alarmClock);
-					_alarmClockService.Edit(alarmClock, dateTime);
+					try
+					{
+						_alarmClockService.Edit(alarmClock, dateTime);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine(ex.Message);
+						Environment.Exit(1);
+					}
 					flag = true;
 				}
 
@@ -204,12 +230,20 @@ namespace CLI
 			Console.WriteLine("Список всех будильников\n" +
 				"============"
 			);
-			foreach (var alarmclock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
-				Console.WriteLine($"\nВремя: {alarmclock.AlarmTime}\n" +
-					$"Название: {alarmclock.Name}\n" +
-					$"Цвет: {alarmclock.AlarmClockColor.Name}\n" +
-					$"Режим: {(alarmclock.IsWorking == true ? "включён" : "выключен")}"
-				);
+			try
+			{
+				foreach (var alarmclock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
+					Console.WriteLine($"\nВремя: {alarmclock.AlarmTime}\n" +
+						$"Название: {alarmclock.Name}\n" +
+						$"Цвет: {alarmclock.AlarmClockColor.Name}\n" +
+						$"Режим: {(alarmclock.IsWorking == true ? "включён" : "выключен")}"
+					);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				Environment.Exit(1);
+			}
 
 			Console.WriteLine("============");
 		}

@@ -1,4 +1,4 @@
-﻿using Data;
+﻿using RepositoriesImplementations;
 using Logic;
 using Model;
 
@@ -29,7 +29,16 @@ namespace CLI
 			bool isTemporal = Console.ReadLine() == "y";
 
 			Guid guid = Guid.NewGuid();
-			_noteService.Create(new Note(guid, noteBody, isTemporal));
+			try
+			{
+				_noteService.Create(new Note(guid, noteBody, isTemporal));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				Environment.Exit(1);
+			}
+
 			DateTime noteCreationDateTime = DateTime.Now;
 			Console.WriteLine("\nЗаметка сохранена.\n\n" +
 				$"Уникальный идентификатор: {guid}" +
@@ -49,7 +58,16 @@ namespace CLI
 			foreach (var note in _noteService.GetNotesList("notes/*"))
 				if (guid == note.Id)
 				{
-					_noteService.Delete(guid);
+					try
+					{
+						_noteService.Delete(guid);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine(ex.Message);
+						Environment.Exit(1);
+					}
+
 					flag = true;
 				}
 
@@ -70,7 +88,15 @@ namespace CLI
 				if (guid == note.Id)
 				{
 					ChooseNoteParam(note);
-					_noteService.Edit(note);
+					try
+					{
+						_noteService.Edit(note);
+					}
+					catch (Exception ex)
+					{
+						Console.WriteLine(ex.Message);
+						Environment.Exit(1);
+					}
 					flag = true;
 				}
 
@@ -176,12 +202,21 @@ namespace CLI
 		public void ShowNotes()
 		{
 			Console.WriteLine("Список всех заметок\n============");
-			foreach (var note in _noteService.GetNotesList("notes/*"))
-				Console.WriteLine($"\nУникальный идентификатор: {note.Id}\n" +
-					$"Дата и время создания: {note.CreationTime}\n" +
-					$"Текст заметки: {note.Body}\n" +
-					$"Автоудаление: {(note.IsTemporal == true ? "включено" : "выключено")}"
-				);
+			try
+			{
+				foreach (var note in _noteService.GetNotesList("notes/*"))
+					Console.WriteLine($"\nУникальный идентификатор: {note.Id}\n" +
+						$"Дата и время создания: {note.CreationTime}\n" +
+						$"Текст заметки: {note.Body}\n" +
+						$"Автоудаление: {(note.IsTemporal == true ? "включено" : "выключено")}"
+					);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				Environment.Exit(1);
+			}
+
 
 			Console.WriteLine("============");
 		}

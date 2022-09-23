@@ -1,6 +1,6 @@
 ﻿using Model;
 
-namespace Data {
+namespace Repositories {
 	public interface INoteRepo {
 		void Create(Note note);
 		void Edit(Note note);
