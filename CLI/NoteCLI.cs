@@ -35,8 +35,8 @@ namespace CLI
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				Environment.Exit(1);
+				Console.WriteLine($"Не удалось создать заметку. {ex.Message}.");
+				return;
 			}
 
 			DateTime noteCreationDateTime = DateTime.Now;
@@ -64,8 +64,8 @@ namespace CLI
 					}
 					catch (Exception ex)
 					{
-						Console.WriteLine(ex.Message);
-						Environment.Exit(1);
+						Console.WriteLine($"Не удалось удалить заметку. {ex.Message}.");
+						return;
 					}
 
 					flag = true;
@@ -94,8 +94,8 @@ namespace CLI
 					}
 					catch (Exception ex)
 					{
-						Console.WriteLine(ex.Message);
-						Environment.Exit(1);
+						Console.WriteLine($"Не удалось изменить заметку. {ex.Message}.");
+						return;
 					}
 					flag = true;
 				}
@@ -213,8 +213,8 @@ namespace CLI
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				Environment.Exit(1);
+				Console.WriteLine($"Не удалось просмотреть заметку. {ex.Message}.");
+				return;
 			}
 
 

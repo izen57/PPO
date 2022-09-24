@@ -1,6 +1,5 @@
 ﻿using Repositories;
 using Model;
-using Serilog.Core;
 using Serilog;
 using System.Timers;
 
@@ -8,11 +7,12 @@ namespace Logic {
 	public class NoteService: INoteService {
 		INoteRepo _repository;
 		System.Timers.Timer _checkForTime;
-		Logger _logger = new LoggerConfiguration()
-			.WriteTo.File("LogNote.txt")
-			.CreateLogger();
 
 		public NoteService(INoteRepo repo) {
+			Log.Logger = new LoggerConfiguration()
+				.WriteTo.File("LogNote.txt")
+				.CreateLogger();
+
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
 
 			_checkForTime = new(60 * 1000);
@@ -46,7 +46,7 @@ namespace Logic {
 			foreach (Note note in GetNotesList("*"))
 				if (note.IsTemporal == true && DateTime.Now - note.CreationTime > TimeSpan.FromDays(1))
 				{
-					_logger.Information($"{DateTime.Now}: Заметка удалена автоматически по истечении срока. Идентификатор заметки: {note.Id}.");
+					Log.Logger.Information($"{DateTime.Now}: Заметка удалена автоматически по истечении срока. Идентификатор заметки: {note.Id}.");
 					_repository.Delete(note.Id);
 				}
 		}

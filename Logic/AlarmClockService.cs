@@ -1,14 +1,10 @@
 ﻿using Repositories;
 using Model;
-using Serilog.Core;
 using Serilog;
 
 namespace Logic {
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
-		Logger _logger = new LoggerConfiguration()
-			.WriteTo.File("LogAlarmClock.txt")
-			.CreateLogger();
 
 		public AlarmClockService(IAlarmClockRepo repo) {
 			_repository = repo ?? throw new ArgumentNullException(nameof(repo));
@@ -39,7 +35,7 @@ namespace Logic {
 			alarmClock.IsWorking = !alarmClock.IsWorking;
 			Edit(alarmClock, alarmClock.AlarmTime);
 
-			_logger.Information($"{DateTime.Now}: Будильник остановлен. Время будильника: {alarmClock.AlarmTime}");
+			Log.Logger.Information($"{DateTime.Now}: Будильник остановлен. Время будильника: {alarmClock.AlarmTime}");
 		}
 	}
 }

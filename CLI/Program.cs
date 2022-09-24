@@ -1,4 +1,9 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+using Serilog;
+using Serilog.Core;
 
 namespace CLI
 {
@@ -6,8 +11,13 @@ namespace CLI
 	{
 		static void Main(string[] args)
 		{
-			var logger = new LoggerConfiguration()
-				.WriteTo.File("LogProgram.txt")
+			var _config = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json")
+				.Build();
+
+			Log.Logger = new LoggerConfiguration()
+				.WriteTo.File(_config["Logger"])
 				.CreateLogger();
 
 			Console.WriteLine("0 - Выход.\n" +
@@ -37,23 +47,23 @@ namespace CLI
 			{
 				case 0:
 					Console.WriteLine("Выход из приложения...");
-					logger.Debug($"{DateTime.Now}: Осуществлён выход из приложения.");
+					Log.Logger.Debug($"{DateTime.Now}: Осуществлён выход из приложения.");
 					Environment.Exit(0);
 					break;
 				case 1:
 					AlarmClockCLI alarmClockCLI = new();
 					alarmClockCLI.Menu();
-					logger.Debug($"{DateTime.Now}: Выбран пункт будильников.");
+					Log.Logger.Debug($"{DateTime.Now}: Выбран пункт будильников.");
 					break;
 				case 2:
 					NoteCLI noteCLI = new();
 					noteCLI.Menu();
-					logger.Debug($"{DateTime.Now}: Выбран пункт заметок.");
+					Log.Logger.Debug($"{DateTime.Now}: Выбран пункт заметок.");
 					break;
 				case 3:
 					StopwatchCLI stopwatchCLI = new();
 					stopwatchCLI.Menu();
-					logger.Debug($"{DateTime.Now}: Выбран пункт секундомера.");
+					Log.Logger.Debug($"{DateTime.Now}: Выбран пункт секундомера.");
 					break;
 			}
 			Log.CloseAndFlush();

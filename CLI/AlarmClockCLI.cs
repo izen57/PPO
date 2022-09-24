@@ -40,8 +40,8 @@ namespace CLI
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				Environment.Exit(1);
+				Console.WriteLine($"Не удалось создать будильник. {ex.Message}.");
+				return;
 			}
 
 			Console.WriteLine("Будильник создан.\n\n" +
@@ -68,8 +68,8 @@ namespace CLI
 					}
 					catch (Exception ex)
 					{
-						Console.WriteLine(ex.Message);
-						Environment.Exit(1);
+						Console.WriteLine($"Не удалось удалить будильник. {ex.Message}.");
+						return;
 					}
 
 					flag = true;
@@ -98,8 +98,8 @@ namespace CLI
 					}
 					catch (Exception ex)
 					{
-						Console.WriteLine(ex.Message);
-						Environment.Exit(1);
+						Console.WriteLine($"Не удалось изменить будильник. {ex.Message}.");
+						return;
 					}
 					flag = true;
 				}
@@ -241,8 +241,8 @@ namespace CLI
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-				Environment.Exit(1);
+				Console.WriteLine($"Не удалось просмотреть будильник. {ex.Message}.");
+				return;
 			}
 
 			Console.WriteLine("============");
