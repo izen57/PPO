@@ -124,7 +124,7 @@ namespace CLI
 
 		public void AddStopwatchFlag()
 		{
-			Console.WriteLine($"Флаг на: {_stopwatchService.SetFlag()}.");
+			Console.WriteLine($"Флаг на: {_stopwatchService.AddStopwatchFlag()}.");
 		}
 
 		public void StopStopWatch()

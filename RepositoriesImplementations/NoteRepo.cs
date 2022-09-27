@@ -15,7 +15,6 @@ namespace RepositoriesImplementations
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("notes");
 			Log.Logger.Information($"{DateTime.Now}: Создана папка для заметок.");
-			Log.CloseAndFlush();
 		}
 
 		public void Create(Note note)
@@ -39,7 +38,6 @@ namespace RepositoriesImplementations
 				$"{note.Body}," +
 				$"{note.IsTemporal}."
 			);
-			Log.CloseAndFlush();
 		}
 
 		public void Edit(Note note)
@@ -75,7 +73,6 @@ namespace RepositoriesImplementations
 				$"{note.Body}," +
 				$"{note.IsTemporal}."
 			);
-			Log.CloseAndFlush();
 		}
 
 		public void Delete(Guid Id)
@@ -103,7 +100,6 @@ namespace RepositoriesImplementations
 			_isoStore.DeleteFile($"notes/{Id}.txt");
 
 			Log.Logger.Information($"{DateTime.Now}: Удалён файл заметки. Идентификатор заметки: {Id}.");
-			Log.CloseAndFlush();
 		}
 
 		public Note? GetNote(Guid Id)
@@ -146,17 +142,16 @@ namespace RepositoriesImplementations
 						bool.Parse(noteIsTemporal)
 					);
 				}
-			Log.CloseAndFlush();
 
 			return null;
 		}
 
-		public List<Note> GetNotesList(string pattern)
+		public List<Note> GetAllNotesList()
 		{
 			string[] filelist;
 			try
 			{
-				filelist = _isoStore.GetFileNames(pattern);
+				filelist = _isoStore.GetFileNames("notes/");
 			}
 			catch (Exception ex)
 			{
@@ -173,7 +168,6 @@ namespace RepositoriesImplementations
 				var note = GetNote(Guid.Parse(fileName.Replace(".txt", "")));
 				noteList.Add(note!);
 			}
-			Log.CloseAndFlush();
 
 			return noteList;
 		}

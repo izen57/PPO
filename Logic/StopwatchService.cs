@@ -37,7 +37,7 @@ namespace Logic {
 			_stopwatch.IsWorking = false;
 		}
 
-		public long SetFlag()
+		public long AddStopwatchFlag()
 		{
 			_stopwatch.TimeFlags.Add(DateTime.Now);
 			return _stopwatch.Timing.ElapsedMilliseconds;

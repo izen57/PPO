@@ -59,7 +59,7 @@ namespace CLI
 
 			DateTime dateTime = DateTime.Parse(Console.ReadLine());
 			bool flag = false;
-			foreach (var alarmClock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
+			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
 				if (dateTime == alarmClock.AlarmTime)
 				{
 					try
@@ -88,7 +88,7 @@ namespace CLI
 			DateTime dateTime = DateTime.Parse(Console.ReadLine());
 
 			bool flag = false;
-			foreach (var alarmClock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
+			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
 				if (dateTime == alarmClock.AlarmTime)
 				{
 					ChooseAlarmClockParam(alarmClock);
@@ -216,7 +216,7 @@ namespace CLI
 
 		public void AlarmClockSignal(object sender, ElapsedEventArgs e)
 		{
-			foreach (var alarmClock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
+			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
 				if (DateTime.Now >= alarmClock.AlarmTime)
 					for (int i = 0; i < 10; ++i)
 					{
@@ -232,7 +232,7 @@ namespace CLI
 			);
 			try
 			{
-				foreach (var alarmclock in _alarmClockService.GetAlarmClocks("alarmclocks/*"))
+				foreach (var alarmclock in _alarmClockService.GetAllAlarmClocks())
 					Console.WriteLine($"\nВремя: {alarmclock.AlarmTime}\n" +
 						$"Название: {alarmclock.Name}\n" +
 						$"Цвет: {alarmclock.AlarmClockColor.Name}\n" +

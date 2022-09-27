@@ -8,7 +8,7 @@ namespace Logic
 		void Set();
 		void Reset();
 		long Stop();
-		long SetFlag();
+		long AddStopwatchFlag();
 		Stopwatch Get();
 		public void EditColor(Color stopwatchColor);
 	}

@@ -55,7 +55,7 @@ namespace CLI
 			Guid guid = Guid.Parse(Console.ReadLine());
 
 			bool flag = false;
-			foreach (var note in _noteService.GetNotesList("notes/*"))
+			foreach (var note in _noteService.GetAllNotesList())
 				if (guid == note.Id)
 				{
 					try
@@ -84,7 +84,7 @@ namespace CLI
 			Guid guid = Guid.Parse(Console.ReadLine());
 
 			bool flag = false;
-			foreach (var note in _noteService.GetNotesList("notes/*"))
+			foreach (var note in _noteService.GetAllNotesList())
 				if (guid == note.Id)
 				{
 					ChooseNoteParam(note);
@@ -204,7 +204,7 @@ namespace CLI
 			Console.WriteLine("Список всех заметок\n============");
 			try
 			{
-				foreach (var note in _noteService.GetNotesList("notes/*"))
+				foreach (var note in _noteService.GetAllNotesList())
 					Console.WriteLine($"\nУникальный идентификатор: {note.Id}\n" +
 						$"Дата и время создания: {note.CreationTime}\n" +
 						$"Текст заметки: {note.Body}\n" +

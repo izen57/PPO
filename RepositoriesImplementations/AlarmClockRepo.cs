@@ -17,7 +17,7 @@ namespace RepositoriesImplementations
 			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 			_isoStore.CreateDirectory("alarmclocks");
 			Log.Logger.Information($"{DateTime.Now}: Создана папка для будильников.");
-			Log.CloseAndFlush();
+			
 		}
 
 		public void Create(AlarmClock alarmClock)
@@ -43,7 +43,7 @@ namespace RepositoriesImplementations
 				$"{alarmClock.AlarmClockColor.Name}," +
 				$"{alarmClock.IsWorking}."
 			);
-			Log.CloseAndFlush();
+			
 		}
 
 		public void Edit(AlarmClock alarmClock, DateTime oldTime)
@@ -87,7 +87,7 @@ namespace RepositoriesImplementations
 				$"Старое название файла: \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\".\n" +
 				$"Новое название файла: \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\"."
 			);
-			Log.CloseAndFlush();
+			
 		}
 
 		public void Delete(DateTime alarmTime)
@@ -117,7 +117,6 @@ namespace RepositoriesImplementations
 
 			Log.Logger.Information($"{DateTime.Now}: Удалён файл будильника. Время будильника: {alarmTime}.");
 
-			Log.CloseAndFlush();
 		}
 
 		public AlarmClock? GetAlarmClock(DateTime alarmTime)
@@ -162,17 +161,16 @@ namespace RepositoriesImplementations
 						bool.Parse(alarmClockWork)
 					);
 				}
-			Log.CloseAndFlush();
 
 			return null;
 		}
 
-		public List<AlarmClock> GetAlarmClocksList(string pattern)
+		public List<AlarmClock> GetAllAlarmClocksList()
 		{
 			string[] filelist;
 			try
 			{
-				filelist = _isoStore.GetFileNames(pattern);
+				filelist = _isoStore.GetFileNames("alarmclocks/");
 			}
 			catch (Exception ex)
 			{
@@ -189,7 +187,6 @@ namespace RepositoriesImplementations
 				var alarmClock = GetAlarmClock(DateTime.Parse(fileName.Replace(".txt", "").Replace("-", ":")));
 				alarmClockList.Add(alarmClock!);
 			}
-			Log.CloseAndFlush();
 
 			return alarmClockList;
 		}

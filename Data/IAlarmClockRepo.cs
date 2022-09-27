@@ -6,6 +6,6 @@ namespace Repositories {
 		void Edit(AlarmClock alarmClock, DateTime oldTime);
 		void Delete(DateTime alarmTime);
 		AlarmClock? GetAlarmClock(DateTime alarmTime);
-		List<AlarmClock> GetAlarmClocksList(string pattern);
+		List<AlarmClock> GetAllAlarmClocksList();
 	}
 }

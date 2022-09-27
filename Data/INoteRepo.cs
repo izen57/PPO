@@ -6,6 +6,6 @@ namespace Repositories {
 		void Edit(Note note);
 		void Delete(Guid id);
 		Note? GetNote(Guid id);
-		List<Note> GetNotesList(string pattern);
+		List<Note> GetAllNotesList();
 	}
 }

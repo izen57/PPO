@@ -27,8 +27,8 @@ namespace Logic {
 			return _repository.GetAlarmClock(dateTime);
 		}
 
-		public List<AlarmClock> GetAlarmClocks(string pattern) {
-			return _repository.GetAlarmClocksList(pattern);
+		public List<AlarmClock> GetAllAlarmClocks() {
+			return _repository.GetAllAlarmClocksList();
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {

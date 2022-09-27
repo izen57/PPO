@@ -32,8 +32,8 @@ namespace Logic {
 			_repository.Delete(id);
 		}
 
-		public List<Note> GetNotesList(string pattern) {
-			return _repository.GetNotesList(pattern);
+		public List<Note> GetAllNotesList() {
+			return _repository.GetAllNotesList();
 		}
 
 		public Note? GetNote(Guid guid)
@@ -43,7 +43,7 @@ namespace Logic {
 
 		private void AutoDelete(object sender, ElapsedEventArgs e)
 		{
-			foreach (Note note in GetNotesList("*"))
+			foreach (Note note in GetAllNotesList())
 				if (note.IsTemporal == true && DateTime.Now - note.CreationTime > TimeSpan.FromDays(1))
 				{
 					Log.Logger.Information($"{DateTime.Now}: Заметка удалена автоматически по истечении срока. Идентификатор заметки: {note.Id}.");

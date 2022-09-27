@@ -17,7 +17,8 @@ namespace CLI
 				.WriteTo.File(_config["Logger"])
 				.CreateLogger();
 
-			Console.WriteLine("0 - Выход.\n" +
+			Console.WriteLine(
+				"0 - Выход.\n" +
 				"1 - Будильники.\n" +
 				"2 - Заметки.\n" +
 				"3 - Секундомер.\n"

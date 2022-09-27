@@ -1,4 +1,5 @@
-﻿using RepositoriesImplementations;
+﻿using Repositories;
+using RepositoriesImplementations;
 using Logic;
 using Model;
 
@@ -23,7 +24,7 @@ namespace TestPPO
 			Assert.IsNotNull(check2, "NoteChange");
 
 			notesService.Delete(id);
-			Assert.AreEqual(0, notesService.GetNotesList("*").Count, "AlarmClockDelete");
+			Assert.AreEqual(0, notesService.GetAllNotesList().Count, "AlarmClockDelete");
 		}
 	}
 }

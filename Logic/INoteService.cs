@@ -7,7 +7,7 @@ namespace Logic
 		void Create(Note note);
 		void Edit(Note note);
 		void Delete(Guid id);
-		List<Note> GetNotesList(string pattern);
+		List<Note> GetAllNotesList();
 		Note? GetNote(Guid guid);
 	}
 }

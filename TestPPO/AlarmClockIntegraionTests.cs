@@ -1,4 +1,5 @@
 ﻿using RepositoriesImplementations;
+using Repositories;
 using Logic;
 using Model;
 
@@ -25,7 +26,7 @@ namespace TestPPO
 			Assert.IsNotNull(alarmClockService.GetAlarmClock(dateTime), "AlarmClockCreate");
 
 			alarmClockService.Delete(dateTime);
-			Assert.AreEqual(0, alarmClockService.GetAlarmClocks("*").Count, "AlarmClockDelete");
+			Assert.AreEqual(0, alarmClockService.GetAllAlarmClocks().Count, "AlarmClockDelete");
 		}
 	}
 }

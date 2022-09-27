@@ -8,7 +8,7 @@ namespace Logic
 		void Edit(AlarmClock alarmCloc, DateTime oldTime);
 		void Delete(DateTime alarmTime);
 		AlarmClock? GetAlarmClock(DateTime dateTime);
-		List<AlarmClock> GetAlarmClocks(string pattern);
+		List<AlarmClock> GetAllAlarmClocks();
 		void InvertWork(AlarmClock alarmClock);
 	}
 }
