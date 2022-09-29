@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserInterface", "User Inter
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exceptions", "Exceptions\Exceptions.csproj", "{E16C0895-E99D-470D-904A-86B79B006236}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoriesImplementations", "RepositoriesImplementations\RepositoriesImplementations.csproj", "{600B99DA-9A9B-4607-9D0F-D9992C5DC8EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoriesImplementations", "RepositoriesImplementations\RepositoriesImplementations.csproj", "{600B99DA-9A9B-4607-9D0F-D9992C5DC8EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
