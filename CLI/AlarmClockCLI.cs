@@ -8,6 +8,7 @@ using Model;
 using User_Interface;
 
 using Timer = System.Timers.Timer;
+using System.Diagnostics;
 
 namespace CLI
 {
@@ -233,6 +234,7 @@ namespace CLI
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
 				if (alarmClock.IsWorking && DateTime.Now >= alarmClock.AlarmTime /*&& DateTime.Now <= alarmClock.AlarmTime - new TimeSpan(0, 0, 30)*/)
 				{
+					//NewConsole(alarmClock);
 					for (int i = 0; i < 10; ++i)
 					{
 						Console.Clear();
@@ -242,6 +244,7 @@ namespace CLI
 						Console.ResetColor();
 					}
 					Console.Clear();
+
 					Console.WriteLine($"Только что сработал будильник, установленный на время {alarmClock.AlarmTime}. Теперь этот будильник выключен.");
 
 					alarmClock.IsWorking = false;
@@ -249,6 +252,27 @@ namespace CLI
 					Menu();
 				}
 		}
+
+		//private void NewConsole(AlarmClock alarmClock)
+		//{
+		//	Process runCmd = new();
+		//	runCmd.StartInfo.FileName = "alarmclock.exe";
+		//	runCmd.StartInfo.UseShellExecute = true;
+		//	runCmd.StartInfo.RedirectStandardOutput = true;
+		//	runCmd.Start();
+
+		//	for (int i = 0; i < 10; ++i)
+		//	{
+		//		Console.Clear();
+		//		Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
+		//		Console.Clear();
+		//		Thread.Sleep(100);
+		//		Console.ResetColor();
+		//	}
+		//	Console.Clear();
+
+		//	runCmd.Close();
+		//}
 
 		public void ShowAlarmClocks()
 		{

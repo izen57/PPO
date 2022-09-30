@@ -2,7 +2,6 @@
 using Model;
 
 using System.Drawing;
-
 using User_Interface;
 
 using SysStopwatch = System.Diagnostics;
@@ -33,8 +32,8 @@ namespace CLI
 		public void Menu()
 		{
 			Console.WriteLine(
-				"$Секундомер:\nНазвание: {_stopwatchService.Get().Name}\n" +
-				$"Цвет: {_stopwatchService.Get().StopwatchColor}\n" +
+				$"Секундомер:\nНазвание: {_stopwatchService.Get().Name}\n" +
+				$"Цвет: {_stopwatchService.Get().StopwatchColor.Name}\n" +
 				$"Время: {_stopwatchService.Get().Timing.Elapsed}\n" +
 				$"Режим работы: {(_stopwatchService.Get().IsWorking == true ? "Запущен" : "Не запущен")}\n");
 			Console.WriteLine("Флаги:\n");
