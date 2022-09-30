@@ -232,7 +232,7 @@ namespace CLI
 		public void AlarmClockSignal(object sender, ElapsedEventArgs e)
 		{
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
-				if (alarmClock.IsWorking && DateTime.Now >= alarmClock.AlarmTime /*&& DateTime.Now <= alarmClock.AlarmTime - new TimeSpan(0, 0, 30)*/)
+				if (alarmClock.IsWorking && DateTime.Now >= alarmClock.AlarmTime && DateTime.Now <= alarmClock.AlarmTime + new TimeSpan(0, 0, 30))
 				{
 					//NewConsole(alarmClock);
 					for (int i = 0; i < 10; ++i)
