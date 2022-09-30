@@ -32,14 +32,15 @@ namespace CLI
 
 		public void Menu()
 		{
-			Console.WriteLine("Секундомер:\n" +
-				$"Название: {_stopwatchService.Get().Name}\n" +
+			Console.WriteLine(
+				"$Секундомер:\nНазвание: {_stopwatchService.Get().Name}\n" +
 				$"Цвет: {_stopwatchService.Get().StopwatchColor}\n" +
 				$"Время: {_stopwatchService.Get().Timing.Elapsed}\n" +
 				$"Режим работы: {(_stopwatchService.Get().IsWorking == true ? "Запущен" : "Не запущен")}\n");
 			Console.WriteLine("Флаги:\n");
 			ShowFlags();
-			Console.WriteLine("\n0 - Выход из программы.\n" +
+			Console.WriteLine(
+				"\n0 - Выход из программы.\n" +
 				"1 - Запустить секундомер.\n" +
 				"2 - Сбросить секундомер.\n" +
 				"3 - Остановить секундомер.\n" +

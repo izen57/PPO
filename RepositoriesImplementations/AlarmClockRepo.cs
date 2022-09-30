@@ -32,7 +32,22 @@ namespace RepositoriesImplementations
 			}
 			string filepath = $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 
-			using StreamWriter writer = new(_isoStore.CreateFile(filepath));
+			IsolatedStorageFileStream isoStream;
+			try
+			{
+				isoStream = _isoStore.CreateFile(filepath);
+			}
+			catch (Exception ex)
+			{
+				Log.Logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\" нельзя открыть.");
+				throw new AlarmClockEditException(
+					$"AlarmClockEdit: Файл с названием \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\" нельзя открыть.",
+					ex
+				);
+
+			}
+
+			using StreamWriter writer = new(isoStream);
 			writer.WriteLine(alarmClock.Name);
 			writer.WriteLine(alarmClock.AlarmClockColor.Name);
 			writer.WriteLine(alarmClock.IsWorking);

@@ -17,7 +17,7 @@ namespace CLI
 
 		public void CreateNote()
 		{
-			Console.WriteLine("Создание новой заметки. Нажмите Esc для сохранения текста. " + "Введите содержимое заметки: ");
+			Console.WriteLine("Создание новой заметки. Нажмите Esc для сохранения текста. Введите содержимое заметки:");
 			string noteBody = "";
 			ConsoleKeyInfo key = new();
 			while (key.Key != ConsoleKey.Escape)
@@ -40,7 +40,8 @@ namespace CLI
 			}
 
 			DateTime noteCreationDateTime = DateTime.Now;
-			Console.WriteLine("\nЗаметка сохранена.\n\n" +
+			Console.WriteLine(
+				"\nЗаметка сохранена.\n\n" +
 				$"Уникальный идентификатор: {guid}" +
 				$"Время создания: {noteCreationDateTime}\n" +
 				$"Текст\n: {noteBody}\n" +
@@ -51,8 +52,10 @@ namespace CLI
 		public void DeleteNote()
 		{
 			ShowNotes();
-			Console.Write("============\n" + "Выберите идентификатор, по которому будет удалена заметка: ");
-			Guid guid = Guid.Parse(Console.ReadLine());
+			Console.Write("============\nВыберите идентификатор, по которому будет удалена заметка: ");
+			Guid guid;
+			while (!Guid.TryParse(Console.ReadLine(), out guid))
+				Console.WriteLine("Ошибка ввода. Введите идентификатор заметки.");
 
 			bool flag = false;
 			foreach (var note in _noteService.GetAllNotesList())
@@ -80,8 +83,10 @@ namespace CLI
 		public void EditNote()
 		{
 			ShowNotes();
-			Console.Write("============\n" + "Выберите идентификатор, по которому будет удалена заметка: ");
-			Guid guid = Guid.Parse(Console.ReadLine());
+			Console.Write("============\nВыберите идентификатор, по которому будет изменена заметка: ");
+			Guid guid;
+			while (!Guid.TryParse(Console.ReadLine(), out guid))
+				Console.WriteLine("Ошибка ввода. Введите идентификатор заметки.");
 
 			bool flag = false;
 			foreach (var note in _noteService.GetAllNotesList())
@@ -108,49 +113,57 @@ namespace CLI
 
 		private void ChooseNoteParam(Note note)
 		{
-			int choice;
-			do
+			Console.WriteLine(
+				"============\nВыберите параметр, по которому будет изменена выбранная заметка:\n" +
+				"0 - Готово\n" +
+				"1 - Текст\n" +
+				$"2 - {(note.IsTemporal == true ? "Выключить автоудаление" : "Включить автоудаление")}"
+			);
+			bool flag = false;
+			int choice = -1;
+			while (flag == false)
 			{
-				Console.WriteLine("============\n" +
-					"Выберите параметр, по которому будет изменена выбранная заметка:\n" +
-					"0 - Готово\n" +
-					"1 - Текст\n" +
-					$"2 - {(note.IsTemporal == true ? "Выключить автоудаление" : "Включить автоудаление")}"
-				);
-				try
+				choice = int.Parse(Console.ReadLine());
+				if (choice >= 0 && choice <= 4)
 				{
-					choice = int.Parse(Console.ReadLine());
+					flag = true;
+					break;
 				}
-				catch
+				else
 				{
-					choice = 0;
+					flag = false;
+					Console.WriteLine("Ошибка ввода. Введите номер функции из списка.");
 				}
+			}
 
-				switch (choice)
-				{
-					case 1:
-						Console.WriteLine("Старый текст заметки:\n" + note.Body);
-						Console.WriteLine("Новый текст заметки (нажмите Esc для сохранения текста):");
-						note.Body = "";
+			switch (choice)
+			{
+				case 1:
+					Console.WriteLine($"Старый текст заметки:\n {note.Body}");
+					Console.WriteLine("Новый текст заметки (нажмите Esc для сохранения текста):");
+					note.Body = "";
 
-						ConsoleKeyInfo key = new();
-						while (key.Key != ConsoleKey.Escape)
-						{
-							key = Console.ReadKey();
-							note.Body += key.KeyChar;
-						}
-						break;
-					case 2:
-						note.IsTemporal = !note.IsTemporal;
-						Console.WriteLine($"Автоудаление {(note.IsTemporal == true ? "включено" : "выключено")}");
-						break;
-				}
-			} while (choice != 0);
+					ConsoleKeyInfo key = new();
+					while (key.Key != ConsoleKey.Escape)
+					{
+						key = Console.ReadKey();
+						note.Body += key.KeyChar;
+					}
+					break;
+				case 2:
+					note.IsTemporal = !note.IsTemporal;
+					Console.WriteLine($"Автоудаление {(note.IsTemporal == true ? "включено" : "выключено")}");
+					break;
+				default:
+					Console.WriteLine("Ошибка. Выберите существующий пункт.");
+					break;
+			}
 		}
 
 		public void Menu()
 		{
-			Console.WriteLine("\n0 - Выход из программы.\n" +
+			Console.WriteLine(
+				"\n0 - Выход из программы.\n" +
 				"1 - Показать все заметки.\n" +
 				"2 - Создать новую заметку.\n" +
 				"3 - Редактировать заметку.\n" +
@@ -205,7 +218,8 @@ namespace CLI
 			try
 			{
 				foreach (var note in _noteService.GetAllNotesList())
-					Console.WriteLine($"\nУникальный идентификатор: {note.Id}\n" +
+					Console.WriteLine(
+						$"\nУникальный идентификатор: {note.Id}\n" +
 						$"Дата и время создания: {note.CreationTime}\n" +
 						$"Текст заметки: {note.Body}\n" +
 						$"Автоудаление: {(note.IsTemporal == true ? "включено" : "выключено")}"
@@ -216,8 +230,6 @@ namespace CLI
 				Console.WriteLine($"Не удалось просмотреть заметку. {ex.Message}.");
 				return;
 			}
-
-
 			Console.WriteLine("============");
 		}
 

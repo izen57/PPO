@@ -8,14 +8,51 @@ namespace CLI
 	{
 		static void Main(string[] args)
 		{
+			string _projectDir = Directory.GetCurrentDirectory();
 			var _config = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
+				.SetBasePath(_projectDir)
 				.AddJsonFile("appsettings.json")
 				.Build();
 
-			Log.Logger = new LoggerConfiguration()
-				.WriteTo.File(_config["Logger"])
-				.CreateLogger();
+			switch (_config["LoggerLevel"])
+			{
+				case "Verbose":
+					Log.Logger = new LoggerConfiguration()
+						.MinimumLevel.Verbose()
+						.WriteTo.File(_config["Logger"])
+						.CreateLogger();
+					break;
+				case "Debug":
+					Log.Logger = new LoggerConfiguration()
+						.MinimumLevel.Debug()
+						.WriteTo.File(_config["Logger"])
+						.CreateLogger();
+					break;
+				case "Information":
+					Log.Logger = new LoggerConfiguration()
+						.MinimumLevel.Information()
+						.WriteTo.File(_config["Logger"])
+						.CreateLogger();
+					break;
+				case "Warning":
+					Log.Logger = new LoggerConfiguration()
+						.MinimumLevel.Warning()
+						.WriteTo.File(_config["Logger"])
+						.CreateLogger();
+					break;
+				case "Error":
+					Log.Logger = new LoggerConfiguration()
+						.MinimumLevel.Error()
+						.WriteTo.File(_config["Logger"])
+						.CreateLogger();
+					break;
+				case "Fatal":
+					Log.Logger = new LoggerConfiguration()
+						.MinimumLevel.Fatal()
+						.WriteTo.File(_config["Logger"])
+						.CreateLogger();
+					break;
+			}
 
 			Console.WriteLine(
 				"0 - Выход.\n" +

@@ -25,7 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Debug\net6.0-windows10.0.22621.0\appsettings.json" />
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Logfile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

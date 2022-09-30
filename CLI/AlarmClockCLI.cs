@@ -14,23 +14,28 @@ namespace CLI
 	public class AlarmClockCLI: IAlarmClockUI
 	{
 		IAlarmClockService _alarmClockService;
-		Timer _checkForTime = new(60 * 1000);
+		Timer _checkForTime = new(10000);
 
 		public AlarmClockCLI()
 		{
 			_alarmClockService = new AlarmClockService(new AlarmClockFileRepo());
+			//_checkForTime.AutoReset = false;
 			_checkForTime.Enabled = true;
 		}
 
 		public void CreateAlarmClock()
 		{
-			Console.WriteLine("Создание нового будильника. " +
-				"Введите время будильника: ");
-			DateTime alarmTime = DateTime.Parse(Console.ReadLine());
+			Console.WriteLine("Создание нового будильника. Введите время будильника: ");
+			DateTime alarmTime;
+			while (!DateTime.TryParse(Console.ReadLine(), out alarmTime))
+				Console.WriteLine("Ошибка ввода. Введите время будильника");
+
 			Console.WriteLine("Введите название будильника: ");
 			string alarmName = Console.ReadLine();
+
 			Console.WriteLine("Введите цвет будильника на английском, которым он будет подавать сигналы: ");
 			Color alarmColor = Color.FromName(Console.ReadLine());
+
 			Console.WriteLine("Запустить будильник сейчас (y/n): ");
 			bool isWorking = Console.ReadLine() == "y";
 
@@ -44,7 +49,8 @@ namespace CLI
 				return;
 			}
 
-			Console.WriteLine("Будильник создан.\n\n" +
+			Console.WriteLine(
+				"Будильник создан.\n\n" +
 				$"Время (дд/ММ/гггг ЧЧ-мм-сс): {alarmTime}\n" +
 				$"Название: {alarmName}\n" +
 				$"Цвет: {alarmColor}\n" +
@@ -55,9 +61,11 @@ namespace CLI
 		public void DeleteAlarmClock()
 		{
 			ShowAlarmClocks();
-			Console.WriteLine("============\n" + "Выберите время, по которому будильник будет удалён (дд/ММ/гггг ЧЧ-мм-сс):");
+			Console.WriteLine("============\nВыберите время, по которому будильник будет удалён (дд/ММ/гггг ЧЧ-мм-сс):");
+			DateTime dateTime;
+			while (!DateTime.TryParse(Console.ReadLine(), out dateTime))
+				Console.WriteLine("Ошибка ввода. Введите время будильника");
 
-			DateTime dateTime = DateTime.Parse(Console.ReadLine());
 			bool flag = false;
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
 				if (dateTime == alarmClock.AlarmTime)
@@ -84,8 +92,10 @@ namespace CLI
 		public void EditAlarmClock()
 		{
 			ShowAlarmClocks();
-			Console.Write("============\n" + "Выберите время, по которому будет изменён будильник (дд/ММ/гггг ЧЧ-мм-сс): ");
-			DateTime dateTime = DateTime.Parse(Console.ReadLine());
+			Console.Write("============\nВыберите время, по которому будет изменён будильник (дд/ММ/гггг ЧЧ-мм-сс): ");
+			DateTime dateTime;
+			while (!DateTime.TryParse(Console.ReadLine(), out dateTime))
+				Console.WriteLine("Ошибка ввода. Введите время будильника");
 
 			bool flag = false;
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
@@ -115,8 +125,8 @@ namespace CLI
 			int choice;
 			do
 			{
-				Console.WriteLine("============\n" +
-					"Выберите параметр, по которому будет изменён выбранный будильник:\n" +
+				Console.WriteLine(
+					"============\nВыберите параметр, по которому будет изменён выбранный будильник:\n" +
 					"0 - Готово\n" +
 					"1 - Время (дд/ММ/гггг ЧЧ-мм-сс)\n" +
 					"2 - Название\n" +
@@ -135,8 +145,11 @@ namespace CLI
 				switch (choice)
 				{
 					case 1:
-						Console.Write("Введите новое время для будильника (дд/ММ/гггг ЧЧ-мм-сс): ");
-						alarmClock.AlarmTime = DateTime.Parse(Console.ReadLine());
+						DateTime dateTime;
+						while (!DateTime.TryParse(Console.ReadLine(), out dateTime))
+							Console.WriteLine("Ошибка ввода. Введите время будильника");
+
+						alarmClock.AlarmTime = dateTime;
 						break;
 					case 2:
 						Console.Write("Введите новое название будильника: ");
@@ -156,7 +169,8 @@ namespace CLI
 		public void Menu()
 		{
 			_checkForTime.Elapsed += new ElapsedEventHandler(AlarmClockSignal);
-			Console.WriteLine("\n0 - Выход из программы.\n" +
+			Console.WriteLine(
+				"\n0 - Выход из программы.\n" +
 				"1 - Показать все будильники.\n" +
 				"2 - Установить новый будильник.\n" +
 				"3 - Изменить существующий будильник.\n" +
@@ -207,33 +221,43 @@ namespace CLI
 
 		private ConsoleColor FromColor(Color c)
 		{
-			int index = c.R > 128 | c.G > 128 | c.B > 128 ? 8 : 0; // Bright bit
-			index |= c.R > 64 ? 4 : 0; // Red bit
-			index |= c.G > 64 ? 2 : 0; // Green bit
-			index |= c.B > 64 ? 1 : 0; // Blue bit
+			int index = c.R > 128 | c.G > 128 | c.B > 128 ? 8 : 0;
+			index |= c.R > 64 ? 4 : 0;
+			index |= c.G > 64 ? 2 : 0;
+			index |= c.B > 64 ? 1 : 0;
 			return (ConsoleColor) index;
 		}
 
 		public void AlarmClockSignal(object sender, ElapsedEventArgs e)
 		{
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
-				if (DateTime.Now >= alarmClock.AlarmTime)
+				if (alarmClock.IsWorking && DateTime.Now >= alarmClock.AlarmTime /*&& DateTime.Now <= alarmClock.AlarmTime - new TimeSpan(0, 0, 30)*/)
+				{
 					for (int i = 0; i < 10; ++i)
 					{
+						Console.Clear();
 						Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
-						Console.BackgroundColor = ConsoleColor.Black;
+						Console.Clear();
+						Thread.Sleep(100);
+						Console.ResetColor();
 					}
+					Console.Clear();
+					Console.WriteLine($"Только что сработал будильник, установленный на время {alarmClock.AlarmTime}. Теперь этот будильник выключен.");
+
+					alarmClock.IsWorking = false;
+					_alarmClockService.Edit(alarmClock, alarmClock.AlarmTime);
+					Menu();
+				}
 		}
 
 		public void ShowAlarmClocks()
 		{
-			Console.WriteLine("Список всех будильников\n" +
-				"============"
-			);
+			Console.WriteLine("Список всех будильников\n============");
 			try
 			{
 				foreach (var alarmclock in _alarmClockService.GetAllAlarmClocks())
-					Console.WriteLine($"\nВремя: {alarmclock.AlarmTime}\n" +
+					Console.WriteLine(
+						$"\nВремя: {alarmclock.AlarmTime}\n" +
 						$"Название: {alarmclock.Name}\n" +
 						$"Цвет: {alarmclock.AlarmClockColor.Name}\n" +
 						$"Режим: {(alarmclock.IsWorking == true ? "включён" : "выключен")}"
