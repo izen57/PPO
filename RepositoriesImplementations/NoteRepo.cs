@@ -41,9 +41,11 @@ namespace RepositoriesImplementations
 				);
 
 			}
-			isoStream.WriteLine(note.CreationTime);
-			isoStream.WriteLine(note.Body);
-			isoStream.WriteLine(note.IsTemporal);
+
+                        using StreamWriter writer = new(isoStream);
+			writer.WriteLine(note.CreationTime);
+			writer.WriteLine(note.Body);
+			writer.WriteLine(note.IsTemporal);
 			Log.Logger.Error($"{DateTime.Now}: Создан файл заметки со следующей информацией:" +
 				$"{note.Id}," +
 				$"{note.CreationTime}," +
