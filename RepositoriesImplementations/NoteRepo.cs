@@ -28,10 +28,22 @@ namespace RepositoriesImplementations
 				);
 			}
 
-			using StreamWriter TextNote = new(_isoStore.CreateFile($"notes/{note.Id}.txt"));
-			TextNote.WriteLine(note.CreationTime);
-			TextNote.WriteLine(note.Body);
-			TextNote.WriteLine(note.IsTemporal);
+			IsolatedStorageFileStream isoStream;
+			try
+			{
+				isoStream = _isoStore.CreateFile($"notes/{note.Id}.txt");
+			}
+			catch (Exception ex)
+			{
+				Log.Logger.Error(
+                                        $"{DateTime.Now}: Файл с названием \"notes/{note.Id}.txt\" нельзя открыть.",
+					ex
+				);
+
+			}
+			isoStream.WriteLine(note.CreationTime);
+			isoStream.WriteLine(note.Body);
+			isoStream.WriteLine(note.IsTemporal);
 			Log.Logger.Error($"{DateTime.Now}: Создан файл заметки со следующей информацией:" +
 				$"{note.Id}," +
 				$"{note.CreationTime}," +
