@@ -19,7 +19,6 @@ namespace CLI
 		public AlarmClockCLI()
 		{
 			_alarmClockService = new AlarmClockService(new AlarmClockFileRepo());
-			//_checkForTime.AutoReset = false;
 			_checkForTime.Enabled = true;
 		}
 
