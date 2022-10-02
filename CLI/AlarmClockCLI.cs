@@ -8,7 +8,6 @@ using Model;
 using User_Interface;
 
 using Timer = System.Timers.Timer;
-using System.Diagnostics;
 
 namespace CLI
 {
@@ -29,7 +28,7 @@ namespace CLI
 			Console.WriteLine("Создание нового будильника. Введите время будильника: ");
 			DateTime alarmTime;
 			while (!DateTime.TryParse(Console.ReadLine(), out alarmTime))
-				Console.WriteLine("Ошибка ввода. Введите время будильника");
+				Console.Write("Ошибка ввода. Введите время будильника: ");
 
 			Console.WriteLine("Введите название будильника: ");
 			string alarmName = Console.ReadLine();
@@ -65,7 +64,7 @@ namespace CLI
 			Console.WriteLine("============\nВыберите время, по которому будильник будет удалён (дд/ММ/гггг ЧЧ-мм-сс):");
 			DateTime dateTime;
 			while (!DateTime.TryParse(Console.ReadLine(), out dateTime))
-				Console.WriteLine("Ошибка ввода. Введите время будильника");
+				Console.Write("Ошибка ввода. Введите время будильника: ");
 
 			bool flag = false;
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
@@ -96,7 +95,7 @@ namespace CLI
 			Console.Write("============\nВыберите время, по которому будет изменён будильник (дд/ММ/гггг ЧЧ-мм-сс): ");
 			DateTime dateTime;
 			while (!DateTime.TryParse(Console.ReadLine(), out dateTime))
-				Console.WriteLine("Ошибка ввода. Введите время будильника");
+				Console.Write("Ошибка ввода. Введите время будильника: ");
 
 			bool flag = false;
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
@@ -148,7 +147,7 @@ namespace CLI
 					case 1:
 						DateTime dateTime;
 						while (!DateTime.TryParse(Console.ReadLine(), out dateTime))
-							Console.WriteLine("Ошибка ввода. Введите время будильника");
+							Console.Write("Ошибка ввода. Введите время будильника: ");
 
 						alarmClock.AlarmTime = dateTime;
 						break;
@@ -163,6 +162,8 @@ namespace CLI
 					case 4:
 						alarmClock.IsWorking = !alarmClock.IsWorking;
 						break;
+					default:
+						continue;
 				}
 			} while (choice != 0);
 		}
@@ -183,7 +184,15 @@ namespace CLI
 			int choice = -1;
 			while (flag == false)
 			{
-				choice = int.Parse(Console.ReadLine());
+				try
+				{
+					choice = int.Parse(Console.ReadLine());
+				}
+				catch
+				{
+					choice = -1;
+				}
+
 				if (choice >= 0 && choice <= 4)
 				{
 					flag = true;

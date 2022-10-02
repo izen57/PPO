@@ -16,7 +16,7 @@ namespace CLI
 		{
 			_stopwatchService = new StopwatchService(new Stopwatch(
 				"Секундомер",
-				Color.FromName("Red"),
+				Color.White,
 				new SysStopwatch.Stopwatch(),
 				new SortedSet<DateTime>(),
 				false
@@ -31,13 +31,7 @@ namespace CLI
 
 		public void Menu()
 		{
-			Console.WriteLine(
-				$"Секундомер:\nНазвание: {_stopwatchService.Get().Name}\n" +
-				$"Цвет: {_stopwatchService.Get().StopwatchColor.Name}\n" +
-				$"Время: {_stopwatchService.Get().Timing.Elapsed}\n" +
-				$"Режим работы: {(_stopwatchService.Get().IsWorking == true ? "Запущен" : "Не запущен")}\n");
-			Console.WriteLine("Флаги:\n");
-			ShowFlags();
+			Update();
 			Console.WriteLine(
 				"\n0 - Выход из программы.\n" +
 				"1 - Запустить секундомер.\n" +
@@ -45,6 +39,7 @@ namespace CLI
 				"3 - Остановить секундомер.\n" +
 				"4 - Установить флаг.\n" +
 				"5 - Поменять цвет.\n" +
+				"6 - Обновить представление.\n" +
 				"\nВведите номер функции из списка:"
 			);
 
@@ -52,8 +47,16 @@ namespace CLI
 			int choice = -1;
 			while (flag == false)
 			{
-				choice = int.Parse(Console.ReadLine());
-				if (choice >= 0 && choice <= 4)
+				try
+				{
+					choice = int.Parse(Console.ReadLine());
+				}
+				catch
+				{
+					choice = -1;
+				}
+
+				if (choice >= 0 && choice <= 6)
 				{
 					flag = true;
 					break;
@@ -90,7 +93,33 @@ namespace CLI
 					EditStopwatchColor();
 					Menu();
 					break;
+				case 6:
+					Update();
+					Menu();
+					break;
 			}
+		}
+
+		private void Update()
+		{
+			Console.ForegroundColor = FromColor(_stopwatchService.Get().StopwatchColor);
+			Console.WriteLine(
+				$"Секундомер:\nНазвание: {_stopwatchService.Get().Name}\n" +
+				$"Цвет: {_stopwatchService.Get().StopwatchColor.Name}\n" +
+				$"Время: {_stopwatchService.Get().Timing.Elapsed}\n" +
+				$"Режим работы: {(_stopwatchService.Get().IsWorking == true ? "Запущен" : "Не запущен")}\n");
+			Console.WriteLine("Флаги:\n");
+			ShowFlags();
+			Console.ResetColor();
+		}
+
+		private ConsoleColor FromColor(Color c)
+		{
+			int index = c.R > 128 | c.G > 128 | c.B > 128 ? 8 : 0;
+			index |= c.R > 64 ? 4 : 0;
+			index |= c.G > 64 ? 2 : 0;
+			index |= c.B > 64 ? 1 : 0;
+			return (ConsoleColor) index;
 		}
 
 		private void ShowFlags()
@@ -110,15 +139,12 @@ namespace CLI
 		public void ResetStopwatch()
 		{
 			_stopwatchService.Reset();
-			_stopwatchService.Get().TimeFlags.Clear();
-			_stopwatchService.Get().IsWorking = false;
 			Console.WriteLine("Секундомер сброшен.");
 		}
 
 		public void SetStopwatch()
 		{
 			_stopwatchService.Set();
-			_stopwatchService.Get().IsWorking = true;
 			Console.WriteLine("Секундомер установлен.");
 		}
 

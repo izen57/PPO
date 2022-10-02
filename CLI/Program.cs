@@ -6,7 +6,7 @@ namespace CLI
 {
 	public class Program
 	{
-		static void Main(string[] args)
+		static void Main()
 		{
 			string _projectDir = Directory.GetCurrentDirectory();
 			var _config = new ConfigurationBuilder()

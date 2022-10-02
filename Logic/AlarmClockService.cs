@@ -35,7 +35,7 @@ namespace Logic {
 			alarmClock.IsWorking = !alarmClock.IsWorking;
 			Edit(alarmClock, alarmClock.AlarmTime);
 
-			Log.Logger.Information($"{DateTime.Now}: Будильник остановлен. Время будильника: {alarmClock.AlarmTime}");
+			Log.Logger.Information($"Будильник остановлен. Время будильника: {alarmClock.AlarmTime}");
 		}
 	}
 }

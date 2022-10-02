@@ -28,10 +28,10 @@ namespace CLI
 			Console.Write("\nУдалить заметку через 24 часа (y/n): ");
 			bool isTemporal = Console.ReadLine() == "y";
 
-			Guid guid = Guid.NewGuid();
+			Note note = new(Guid.NewGuid(), noteBody, isTemporal);
 			try
 			{
-				_noteService.Create(new Note(guid, noteBody, isTemporal));
+				_noteService.Create(note);
 			}
 			catch (Exception ex)
 			{
@@ -39,13 +39,12 @@ namespace CLI
 				return;
 			}
 
-			DateTime noteCreationDateTime = DateTime.Now;
 			Console.WriteLine(
 				"\nЗаметка сохранена.\n\n" +
-				$"Уникальный идентификатор: {guid}" +
-				$"Время создания: {noteCreationDateTime}\n" +
-				$"Текст\n: {noteBody}\n" +
-				$"Автоудаление: {(isTemporal == true ? "да" : "нет")}\n"
+				$"Уникальный идентификатор: {note.Id}" +
+				$"Время создания: {note.CreationTime}\n" +
+				$"Текст\n: {note.Body}\n" +
+				$"Автоудаление: {(note.IsTemporal == true ? "да" : "нет")}\n"
 			);
 		}
 
@@ -55,7 +54,7 @@ namespace CLI
 			Console.Write("============\nВыберите идентификатор, по которому будет удалена заметка: ");
 			Guid guid;
 			while (!Guid.TryParse(Console.ReadLine(), out guid))
-				Console.WriteLine("Ошибка ввода. Введите идентификатор заметки.");
+				Console.Write("Ошибка ввода. Введите идентификатор заметки: ");
 
 			bool flag = false;
 			foreach (var note in _noteService.GetAllNotesList())
@@ -86,7 +85,7 @@ namespace CLI
 			Console.Write("============\nВыберите идентификатор, по которому будет изменена заметка: ");
 			Guid guid;
 			while (!Guid.TryParse(Console.ReadLine(), out guid))
-				Console.WriteLine("Ошибка ввода. Введите идентификатор заметки.");
+				Console.Write("Ошибка ввода. Введите идентификатор заметки: ");
 
 			bool flag = false;
 			foreach (var note in _noteService.GetAllNotesList())
@@ -123,7 +122,15 @@ namespace CLI
 			int choice = -1;
 			while (flag == false)
 			{
-				choice = int.Parse(Console.ReadLine());
+				try
+				{
+					choice = int.Parse(Console.ReadLine());
+				}
+				catch
+				{
+					choice = -1;
+				}
+
 				if (choice >= 0 && choice <= 4)
 				{
 					flag = true;
@@ -154,9 +161,6 @@ namespace CLI
 					note.IsTemporal = !note.IsTemporal;
 					Console.WriteLine($"Автоудаление {(note.IsTemporal == true ? "включено" : "выключено")}");
 					break;
-				default:
-					Console.WriteLine("Ошибка. Выберите существующий пункт.");
-					break;
 			}
 		}
 
@@ -175,7 +179,15 @@ namespace CLI
 			int choice = -1;
 			while (flag == false)
 			{
-				choice = int.Parse(Console.ReadLine());
+				try
+				{
+					choice = int.Parse(Console.ReadLine());
+				}
+				catch
+				{
+					choice = -1;
+				}
+
 				if (choice >= 0 && choice <= 4)
 				{
 					flag = true;

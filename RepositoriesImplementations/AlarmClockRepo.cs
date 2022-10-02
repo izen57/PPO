@@ -14,9 +14,19 @@ namespace RepositoriesImplementations
 
 		public AlarmClockFileRepo()
 		{
-			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-			_isoStore.CreateDirectory("alarmclocks");
-			Log.Logger.Information($"{DateTime.Now}: Создана папка для будильников.");
+			try
+			{
+				_isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
+				_isoStore.CreateDirectory("alarmclocks");
+			}
+			catch (Exception ex)
+			{
+				throw new AlarmClockCreateException(
+					"AlarmClockFileRepo: Невозможно создать защищённое хранилище будильников.",
+					ex
+				);
+			}
+			Log.Logger.Information("Создана папка для будильников.");
 			
 		}
 
@@ -24,7 +34,7 @@ namespace RepositoriesImplementations
 		{
 			if (_isoStore.AvailableFreeSpace <= 0)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Место в защищённом хранилище будильников закончилось.");
+				Log.Logger.Error("Место в защищённом хранилище будильников закончилось.");
 				throw new AlarmClockCreateException(
 					"AlarmClockCreate: Место в защищённом хранилище будильников закончилось.",
 					new IsolatedStorageException()
@@ -39,12 +49,11 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\" нельзя открыть.");
+				Log.Logger.Error($"Файл с названием \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\" нельзя открыть.");
 				throw new AlarmClockEditException(
 					$"AlarmClockEdit: Файл с названием \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\" нельзя открыть.",
 					ex
 				);
-
 			}
 
 			using StreamWriter writer = new(isoStream);
@@ -52,7 +61,7 @@ namespace RepositoriesImplementations
 			writer.WriteLine(alarmClock.AlarmClockColor.Name);
 			writer.WriteLine(alarmClock.IsWorking);
 
-			Log.Logger.Information($"{DateTime.Now}: Создан файл будильника со следующей информацией:" +
+			Log.Logger.Information("Создан файл будильника со следующей информацией:" +
 				$"{alarmClock.Name}," +
 				$"{alarmClock.AlarmTime}," +
 				$"{alarmClock.AlarmClockColor.Name}," +
@@ -75,7 +84,7 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
+				Log.Logger.Error($"Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
 				throw new AlarmClockEditException(
 					$"AlarmClockEdit: Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.",
 					ex
@@ -89,7 +98,7 @@ namespace RepositoriesImplementations
 				writer.WriteLine(alarmClock.IsWorking);
 			}
 
-			Log.Logger.Information($"{DateTime.Now}: Изменён файл будильника следующей информацией:" +
+			Log.Logger.Information("Изменён файл будильника следующей информацией:" +
 				$"{alarmClock.Name}," +
 				$"{alarmClock.AlarmTime}," +
 				$"{alarmClock.AlarmClockColor.Name}," +
@@ -98,7 +107,7 @@ namespace RepositoriesImplementations
 
 			_isoStore.MoveFile($"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt", $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt");
 
-			Log.Logger.Information($"{DateTime.Now}: Файл будильника переименован.\n " +
+			Log.Logger.Information("Файл будильника переименован.\n " +
 				$"Старое название файла: \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\".\n" +
 				$"Новое название файла: \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\"."
 			);
@@ -120,7 +129,7 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
+				Log.Logger.Error($"Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
 				throw new AlarmClockDeleteException(
 					$"AlarmClockDelete: Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.",
 					ex
@@ -130,7 +139,7 @@ namespace RepositoriesImplementations
 			isoStream.Close();
 			_isoStore.DeleteFile(filepath);
 
-			Log.Logger.Information($"{DateTime.Now}: Удалён файл будильника. Время будильника: {alarmTime}.");
+			Log.Logger.Information($"Удалён файл будильника. Время будильника: {alarmTime}.");
 
 		}
 
@@ -144,7 +153,7 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
+				Log.Logger.Error("Папка для будильников в защищённом хранилище не найдена.");
 				throw new AlarmClockGetException(
 					"AlarmClockGet: Папка для будильников в защищённом хранилище не найдена.",
 					ex
@@ -165,7 +174,7 @@ namespace RepositoriesImplementations
 					string? alarmClockWork = readerStream.ReadLine();
 					if (alarmClockName == null || alarmClockColor == null || alarmClockWork == null)
 					{
-						Log.Logger.Error($"{DateTime.Now}: Ошибка разметки файла будильника. Время будильника: {alarmTime}.");
+						Log.Logger.Error($"Ошибка разметки файла будильника. Время будильника: {alarmTime}.");
 						throw new ArgumentNullException();
 					}
 
@@ -189,7 +198,7 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Папка для будильников в защищённом хранилище не найдена.");
+				Log.Logger.Error("Папка для будильников в защищённом хранилище не найдена.");
 				throw new AlarmClockGetException(
 					"AlarmClockGet: Папка для будильников в защищённом хранилище не найдена.",
 					ex

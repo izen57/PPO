@@ -3,6 +3,7 @@ using System.IO.IsolatedStorage;
 using Serilog;
 using Exceptions.NoteExceptions;
 using Repositories;
+using Exceptions.AlarmClockExceptions;
 
 namespace RepositoriesImplementations
 {
@@ -12,16 +13,27 @@ namespace RepositoriesImplementations
 
 		public NoteFileRepo()
 		{
-			_isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-			_isoStore.CreateDirectory("notes");
-			Log.Logger.Information($"{DateTime.Now}: Создана папка для заметок.");
+			try
+			{
+				_isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
+				_isoStore.CreateDirectory("notes");
+			}
+			catch (Exception ex)
+			{
+				Log.Logger.Error("Папку заметок не удалось создать.");
+				throw new NoteCreateException(
+					"NoteFileRepo: Невозможно создать защищённое хранилище заметок.",
+					ex
+				);
+			}
+			Log.Logger.Information("Создана папка для заметок.");
 		}
 
 		public void Create(Note note)
 		{
 			if (_isoStore.AvailableFreeSpace <= 0)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Место в папке заметок закончилось.");
+				Log.Logger.Error("Место в папке заметок закончилось.");
 				throw new NoteCreateException(
 					"NoteCreate: Место в папке заметок закончилось.",
 					new IsolatedStorageException()
@@ -35,18 +47,19 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error(
-                                        $"{DateTime.Now}: Файл с названием \"notes/{note.Id}.txt\" нельзя открыть.",
+				Log.Logger.Error($"Файл с названием \"notes/{note.Id}.txt\" нельзя открыть.");
+				throw new AlarmClockEditException(
+					$"Файл с названием \"notes/{note.Id}.txt\" нельзя открыть.",
 					ex
 				);
-
 			}
 
-                        using StreamWriter writer = new(isoStream);
-			writer.WriteLine(note.CreationTime);
-			writer.WriteLine(note.Body);
-			writer.WriteLine(note.IsTemporal);
-			Log.Logger.Error($"{DateTime.Now}: Создан файл заметки со следующей информацией:" +
+			using StreamWriter TextNote = new(isoStream);
+			TextNote.WriteLine(note.CreationTime);
+			TextNote.WriteLine(note.Body);
+			TextNote.WriteLine(note.IsTemporal);
+			Log.Logger.Error(
+				$"Создан файл заметки со следующей информацией:\n" +
 				$"{note.Id}," +
 				$"{note.CreationTime}," +
 				$"{note.Body}," +
@@ -68,7 +81,7 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Файл с названием \"notes/{note.Id}.txt\" не найден.");
+				Log.Logger.Error($"Файл с названием \"notes/{note.Id}.txt\" не найден.");
 				throw new NoteEditException(
 					$"NoteEdit: Файл с названием \"notes/{note.Id}.txt\" не найден.",
 					ex
@@ -81,7 +94,7 @@ namespace RepositoriesImplementations
 			writer.WriteLine(note.Body);
 			writer.WriteLine(note.IsTemporal);
 
-			Log.Logger.Information($"{DateTime.Now}: Изменён файл заметки со следующей информацией:" +
+			Log.Logger.Information("Изменён файл заметки со следующей информацией:" +
 				$"{note.Id}," +
 				$"{note.CreationTime}," +
 				$"{note.Body}," +
@@ -113,7 +126,7 @@ namespace RepositoriesImplementations
 			isoStream.Close();
 			_isoStore.DeleteFile($"notes/{Id}.txt");
 
-			Log.Logger.Information($"{DateTime.Now}: Удалён файл заметки. Идентификатор заметки: {Id}.");
+			Log.Logger.Information($"Удалён файл заметки. Идентификатор заметки: {Id}.");
 		}
 
 		public Note? GetNote(Guid Id)
@@ -125,9 +138,9 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Папка для заметок в защищённом хранилище не найдена.");
+				Log.Logger.Error($"Папка для заметок в защищённом хранилище не найдена.");
 				throw new NoteGetException(
-					"NoteGet: Папка для заметок в защищённом хранилище не найдена.",
+					"GetNote: Папка для заметок в защищённом хранилище не найдена.",
 					ex
 				);
 			}
@@ -146,12 +159,13 @@ namespace RepositoriesImplementations
 					string? noteIsTemporal = readerStream.ReadLine();
 					if (noteCreationTime == null || noteBody == null || noteIsTemporal == null)
 					{
-						Log.Logger.Error($"{DateTime.Now}: Ошибка разметки файла заметки. Идентификатор заметки: {Id}.");
+						Log.Logger.Error($"Ошибка разметки файла заметки. Идентификатор заметки: {Id}.");
 						throw new ArgumentNullException();
 					}
 
 					return new Note(
 						Id,
+						DateTime.Parse(noteCreationTime),
 						noteBody,
 						bool.Parse(noteIsTemporal)
 					);
@@ -169,7 +183,7 @@ namespace RepositoriesImplementations
 			}
 			catch (Exception ex)
 			{
-				Log.Logger.Error($"{DateTime.Now}: Папка для заметок в защищённом хранилище не найдена.");
+				Log.Logger.Error("Папка для заметок в защищённом хранилище не найдена.");
 				throw new NoteGetException(
 					"NoteGet: Папка для заметок в защищённом хранилище не найдена.",
 					ex

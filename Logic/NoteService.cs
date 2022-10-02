@@ -44,9 +44,9 @@ namespace Logic {
 		private void AutoDelete(object sender, ElapsedEventArgs e)
 		{
 			foreach (Note note in GetAllNotesList())
-				if (note.IsTemporal == true && DateTime.Now - note.CreationTime > TimeSpan.FromDays(1))
+				if (note.IsTemporal == true && DateTime.Now - note.CreationTime >= TimeSpan.FromDays(1))
 				{
-					Log.Logger.Information($"{DateTime.Now}: Заметка удалена автоматически по истечении срока. Идентификатор заметки: {note.Id}.");
+					Log.Logger.Information($"Заметка удалена автоматически по истечении срока. Идентификатор заметки: {note.Id}.");
 					_repository.Delete(note.Id);
 				}
 		}

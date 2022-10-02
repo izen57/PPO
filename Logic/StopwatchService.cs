@@ -16,7 +16,7 @@ namespace Logic {
 			_stopwatch.Timing.Start();
 			_stopwatch.IsWorking = true;
 
-			Log.Logger.Information($"{DateTime.Now}: Секундомер запущен.");
+			Log.Logger.Information("Секундомер запущен.");
 		}
 
 		public long Stop()
@@ -24,17 +24,17 @@ namespace Logic {
 			_stopwatch.Timing.Stop();
 			_stopwatch.IsWorking = false;
 
-			Log.Logger.Information($"{DateTime.Now}: Секундомер остановлен.");
+			Log.Logger.Information("Секундомер остановлен.");
 
 			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
 		public void Reset() {
 			_stopwatch.Timing.Reset();
-
-			Log.Logger.Information($"{DateTime.Now}: Секундомер сброшен.");
-
+			_stopwatch.TimeFlags.Clear();
 			_stopwatch.IsWorking = false;
+
+			Log.Logger.Information("Секундомер  и его флаги сброшены.");
 		}
 
 		public long AddStopwatchFlag()
@@ -50,7 +50,7 @@ namespace Logic {
 		public void EditColor(Color stopwatchColor) {
 			_stopwatch.StopwatchColor = stopwatchColor;
 
-			Log.Logger.Information($"{DateTime.Now}: Цвет секундомера изменён.");
+			Log.Logger.Information("Цвет секундомера изменён.");
 		}
 	}
 }
