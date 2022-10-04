@@ -55,6 +55,7 @@ namespace CLI
 			}
 
 			Console.WriteLine(
+				"Выберите пункт меню:\n" +
 				"0 - Выход.\n" +
 				"1 - Будильники.\n" +
 				"2 - Заметки.\n" +
@@ -65,7 +66,14 @@ namespace CLI
 			int choice = -1;
 			while (flag == false)
 			{
-				choice = int.Parse(Console.ReadLine());
+				try
+				{
+					choice = int.Parse(Console.ReadLine());
+				}
+				catch
+				{
+					choice = -1;
+				}
 				if (choice >= 0 && choice <= 3)
 				{
 					flag = true;
@@ -82,23 +90,23 @@ namespace CLI
 			{
 				case 0:
 					Console.WriteLine("Выход из приложения...");
-					Log.Logger.Debug($"{DateTime.Now}: Осуществлён выход из приложения.");
+					Log.Logger.Debug("Осуществлён выход из приложения.");
 					Environment.Exit(0);
 					break;
 				case 1:
 					AlarmClockCLI alarmClockCLI = new();
 					alarmClockCLI.Menu();
-					Log.Logger.Debug($"{DateTime.Now}: Выбран пункт будильников.");
+					Log.Logger.Debug("Выбран пункт будильников.");
 					break;
 				case 2:
 					NoteCLI noteCLI = new();
 					noteCLI.Menu();
-					Log.Logger.Debug($"{DateTime.Now}: Выбран пункт заметок.");
+					Log.Logger.Debug("Выбран пункт заметок.");
 					break;
 				case 3:
 					StopwatchCLI stopwatchCLI = new();
 					stopwatchCLI.Menu();
-					Log.Logger.Debug($"{DateTime.Now}: Выбран пункт секундомера.");
+					Log.Logger.Debug("Выбран пункт секундомера.");
 					break;
 			}
 			Log.CloseAndFlush();

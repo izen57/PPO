@@ -14,7 +14,7 @@ namespace CLI
 	public class AlarmClockCLI: IAlarmClockUI
 	{
 		IAlarmClockService _alarmClockService;
-		Timer _checkForTime = new(10000);
+		Timer _checkForTime = new(7000);
 
 		public AlarmClockCLI()
 		{
@@ -24,7 +24,7 @@ namespace CLI
 
 		public void CreateAlarmClock()
 		{
-			Console.WriteLine("Создание нового будильника. Введите время будильника: ");
+			Console.Write("Создание нового будильника. Введите время будильника: ");
 			DateTime alarmTime;
 			while (!DateTime.TryParse(Console.ReadLine(), out alarmTime))
 				Console.Write("Ошибка ввода. Введите время будильника: ");
@@ -169,7 +169,7 @@ namespace CLI
 
 		public void Menu()
 		{
-			_checkForTime.Elapsed += new ElapsedEventHandler(AlarmClockSignal);
+			_checkForTime.Elapsed += AlarmClockSignal;
 			Console.WriteLine(
 				"\n0 - Выход из программы.\n" +
 				"1 - Показать все будильники.\n" +
@@ -242,7 +242,6 @@ namespace CLI
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
 				if (alarmClock.IsWorking && DateTime.Now >= alarmClock.AlarmTime && DateTime.Now <= alarmClock.AlarmTime + new TimeSpan(0, 0, 30))
 				{
-					//NewConsole(alarmClock);
 					for (int i = 0; i < 10; ++i)
 					{
 						Console.Clear();
@@ -260,27 +259,6 @@ namespace CLI
 					Menu();
 				}
 		}
-
-		//private void NewConsole(AlarmClock alarmClock)
-		//{
-		//	Process runCmd = new();
-		//	runCmd.StartInfo.FileName = "alarmclock.exe";
-		//	runCmd.StartInfo.UseShellExecute = true;
-		//	runCmd.StartInfo.RedirectStandardOutput = true;
-		//	runCmd.Start();
-
-		//	for (int i = 0; i < 10; ++i)
-		//	{
-		//		Console.Clear();
-		//		Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
-		//		Console.Clear();
-		//		Thread.Sleep(100);
-		//		Console.ResetColor();
-		//	}
-		//	Console.Clear();
-
-		//	runCmd.Close();
-		//}
 
 		public void ShowAlarmClocks()
 		{
