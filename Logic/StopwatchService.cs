@@ -1,10 +1,9 @@
-﻿using PPO.Model;
+﻿using Model;
 
-using System;
+using Serilog;
 using System.Drawing;
-using System.Collections.Generic;
 
-namespace PPO.Logic {
+namespace Logic {
 	public class StopwatchService: IStopwatchService {
 		static Stopwatch _stopwatch;
 
@@ -16,22 +15,42 @@ namespace PPO.Logic {
 		public void Set() {
 			_stopwatch.Timing.Start();
 			_stopwatch.IsWorking = true;
+
+			Log.Logger.Information("Секундомер запущен.");
+		}
+
+		public long Stop()
+		{
+			_stopwatch.Timing.Stop();
+			_stopwatch.IsWorking = false;
+
+			Log.Logger.Information("Секундомер остановлен.");
+
+			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
 		public void Reset() {
-			_stopwatch.Timing.Stop();
+			_stopwatch.Timing.Reset();
+			_stopwatch.TimeFlags.Clear();
 			_stopwatch.IsWorking = false;
+
+			Log.Logger.Information("Секундомер  и его флаги сброшены.");
+		}
+
+		public long AddStopwatchFlag()
+		{
+			_stopwatch.TimeFlags.Add(DateTime.Now);
+			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
 		public Stopwatch Get() {
 			return _stopwatch;
 		}
 
-		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<DateTime> timeFlags) {
-			_stopwatch.Name = name;
+		public void EditColor(Color stopwatchColor) {
 			_stopwatch.StopwatchColor = stopwatchColor;
-			_stopwatch.Timing = timing;
-			_stopwatch.TimeFlags = timeFlags;
+
+			Log.Logger.Information("Цвет секундомера изменён.");
 		}
 	}
 }

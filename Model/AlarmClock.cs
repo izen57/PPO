@@ -1,7 +1,6 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace PPO.Model {
+namespace Model {
 	public class AlarmClock {
 		public DateTime AlarmTime { get; set; }
 		public string Name { get; set; }

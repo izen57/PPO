@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Drawing;
+﻿using System.Drawing;
+using Model;
 
-namespace PPO.Logic
+namespace Logic
 {
 	public interface IStopwatchService
 	{
-		public void Set();
-		public void Reset();
-		public void Edit(string name, Color stopwatchColor, System.Diagnostics.Stopwatch timing, List<DateTime> timeFlags);
+		void Set();
+		void Reset();
+		long Stop();
+		long AddStopwatchFlag();
+		Stopwatch Get();
+		public void EditColor(Color stopwatchColor);
 	}
 }

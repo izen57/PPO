@@ -1,9 +1,8 @@
-﻿using PPO.Database;
-using PPO.Model;
-using System;
-using System.Collections.Generic;
+﻿using Repositories;
+using Model;
+using Serilog;
 
-namespace PPO.Logic {
+namespace Logic {
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
 
@@ -15,8 +14,8 @@ namespace PPO.Logic {
 			_repository.Create(alarmClock);
 		}
 
-		public void Edit(AlarmClock alarmClock) {
-			_repository.Edit(alarmClock);
+		public void Edit(AlarmClock alarmClock, DateTime oldTime) {
+			_repository.Edit(alarmClock, oldTime);
 		}
 
 		public void Delete(DateTime alarmTime) {
@@ -28,13 +27,15 @@ namespace PPO.Logic {
 			return _repository.GetAlarmClock(dateTime);
 		}
 
-		public List<AlarmClock> GetAlarmClocks(string pattern) {
-			return _repository.GetAlarmClocksList(pattern);
+		public List<AlarmClock> GetAllAlarmClocks() {
+			return _repository.GetAllAlarmClocksList();
 		}
 
 		public void InvertWork(AlarmClock alarmClock) {
 			alarmClock.IsWorking = !alarmClock.IsWorking;
-			Edit(alarmClock);
+			Edit(alarmClock, alarmClock.AlarmTime);
+
+			Log.Logger.Information($"Будильник остановлен. Время будильника: {alarmClock.AlarmTime}");
 		}
 	}
 }

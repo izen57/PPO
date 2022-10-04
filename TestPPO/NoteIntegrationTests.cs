@@ -1,6 +1,7 @@
-﻿using PPO.Database;
-using PPO.Logic;
-using PPO.Model;
+﻿using Repositories;
+using RepositoriesImplementations;
+using Logic;
+using Model;
 
 namespace TestPPO
 {
@@ -10,8 +11,8 @@ namespace TestPPO
 		[TestMethod]
 		public void NoteTest()
 		{
-			INotesRepo notesRepo = new NotesFileRepo();
-			INotesService notesService = new NotesService(notesRepo);
+			INoteRepo notesRepo = new NoteFileRepo();
+			INoteService notesService = new NoteService(notesRepo);
 			var id = Guid.NewGuid();
 			
 			Note check1 = new(id, "test1", false);
@@ -23,7 +24,7 @@ namespace TestPPO
 			Assert.IsNotNull(check2, "NoteChange");
 
 			notesService.Delete(id);
-			Assert.AreEqual(0, notesService.GetNotesByPattern("*").Count, "AlarmClockDelete");
+			Assert.AreEqual(0, notesService.GetAllNotesList().Count, "AlarmClockDelete");
 		}
 	}
 }

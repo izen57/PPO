@@ -1,6 +1,7 @@
-﻿using PPO.Database;
-using PPO.Logic;
-using PPO.Model;
+﻿using RepositoriesImplementations;
+using Repositories;
+using Logic;
+using Model;
 
 using System.Drawing;
 
@@ -21,11 +22,11 @@ namespace TestPPO
 			Assert.IsNotNull(alarmClockService.GetAlarmClock(dateTime), "AlarmClockCreate");
 
 			AlarmClock check2 = new(dateTime, "check2", Color.FromName("yellow"), false);
-			alarmClockService.Edit(check2);
+			alarmClockService.Edit(check2, dateTime);
 			Assert.IsNotNull(alarmClockService.GetAlarmClock(dateTime), "AlarmClockCreate");
 
 			alarmClockService.Delete(dateTime);
-			Assert.AreEqual(0, alarmClockService.GetAlarmClocks("*").Count, "AlarmClockDelete");
+			Assert.AreEqual(0, alarmClockService.GetAllAlarmClocks().Count, "AlarmClockDelete");
 		}
 	}
 }
