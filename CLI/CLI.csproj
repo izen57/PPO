@@ -12,17 +12,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
     <Compile Remove="UserInterface\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="UserInterface\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
     <None Remove="UserInterface\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="AlarmClockCLI.cs" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <Compile Include="AlarmClockCLI.cs" />
     <Compile Include="NoteCLI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="StopwatchCLI.cs" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <None Include="appsettings.json">
@@ -48,21 +58,6 @@
     <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\RepositoriesImplementations\RepositoriesImplementations.csproj" />
     <ProjectReference Include="..\User Interface\UserInterface.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Logic">
-      <HintPath>..\Logic\bin\Debug\net6.0-windows10.0.22621.0\Logic.dll</HintPath>
-    </Reference>
-    <Reference Include="Model">
-      <HintPath>..\Model\bin\Debug\net6.0-windows10.0.22621.0\Model.dll</HintPath>
-    </Reference>
-    <Reference Include="RepositoriesImplementations">
-      <HintPath>..\RepositoriesImplementations\bin\Debug\net6.0-windows10.0.22621.0\RepositoriesImplementations.dll</HintPath>
-    </Reference>
-    <Reference Include="UserInterface">
-      <HintPath>..\User Interface\bin\Debug\net6.0-windows10.0.22621.0\UserInterface.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
