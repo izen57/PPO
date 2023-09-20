@@ -1,9 +1,11 @@
-﻿using System.Drawing;
-using System.Timers;
+﻿using Logic;
+
+using Model;
 
 using RepositoriesImplementations;
-using Logic;
-using Model;
+
+using System.Drawing;
+using System.Timers;
 
 using User_Interface;
 

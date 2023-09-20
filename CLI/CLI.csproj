@@ -24,17 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="AlarmClockCLI.cs" />
-  </ItemGroup>
-
-  <!--<ItemGroup>
-    <Compile Include="AlarmClockCLI.cs" />
-    <Compile Include="NoteCLI.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="StopwatchCLI.cs" />
-  </ItemGroup>-->
-
-  <ItemGroup>
     <None Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
