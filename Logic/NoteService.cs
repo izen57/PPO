@@ -13,7 +13,8 @@ namespace Logic
 		INoteRepo _repository;
 		System.Timers.Timer _checkForTime;
 
-		public NoteService(INoteRepo repo) {
+		public NoteService(INoteRepo repo)
+		{
 			Log.Logger = new LoggerConfiguration()
 				.WriteTo.File("LogNote.txt")
 				.CreateLogger();
@@ -25,19 +26,23 @@ namespace Logic
 			_checkForTime.Enabled = true;
 		}
 
-		public void Create(Note note) {
+		public void Create(Note note)
+		{
 			_repository.Create(note);
 		}
 
-		public void Edit(Note note) {
+		public void Edit(Note note)
+		{
 			_repository.Edit(note);
 		}
 
-		public void Delete(Guid id) {
+		public void Delete(Guid id)
+		{
 			_repository.Delete(id);
 		}
 
-		public List<Note> GetAllNotesList() {
+		public List<Note> GetAllNotesList()
+		{
 			return _repository.GetAllNotesList();
 		}
 
@@ -49,8 +54,7 @@ namespace Logic
 		private void AutoDelete(object sender, ElapsedEventArgs e)
 		{
 			foreach (Note note in GetAllNotesList())
-				if (note.IsTemporal == true && DateTime.Now - note.CreationTime >= TimeSpan.FromDays(1))
-				{
+				if (note.IsTemporal == true && DateTime.Now - note.CreationTime >= TimeSpan.FromDays(1)) {
 					Log.Logger.Information($"Заметка удалена автоматически по истечении срока. Идентификатор заметки: {note.Id}.");
 					_repository.Delete(note.Id);
 				}

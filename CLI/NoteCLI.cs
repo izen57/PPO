@@ -22,8 +22,7 @@ namespace CLI
 			Console.WriteLine("Создание новой заметки. Нажмите Esc для сохранения текста. Введите содержимое заметки:");
 			string noteBody = "";
 			ConsoleKeyInfo key = new();
-			while (key.Key != ConsoleKey.Escape)
-			{
+			while (key.Key != ConsoleKey.Escape) {
 				key = Console.ReadKey();
 				noteBody += key.KeyChar;
 			}
@@ -31,12 +30,9 @@ namespace CLI
 			bool isTemporal = Console.ReadLine() == "y";
 
 			Note note = new(Guid.NewGuid(), noteBody, isTemporal);
-			try
-			{
+			try {
 				_noteService.Create(note);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Console.WriteLine($"Не удалось создать заметку. {ex.Message}.");
 				return;
 			}
@@ -60,14 +56,10 @@ namespace CLI
 
 			bool flag = false;
 			foreach (var note in _noteService.GetAllNotesList())
-				if (guid == note.Id)
-				{
-					try
-					{
+				if (guid == note.Id) {
+					try {
 						_noteService.Delete(guid);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						Console.WriteLine($"Не удалось удалить заметку. {ex.Message}.");
 						return;
 					}
@@ -91,15 +83,11 @@ namespace CLI
 
 			bool flag = false;
 			foreach (var note in _noteService.GetAllNotesList())
-				if (guid == note.Id)
-				{
+				if (guid == note.Id) {
 					ChooseNoteParam(note);
-					try
-					{
+					try {
 						_noteService.Edit(note);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						Console.WriteLine($"Не удалось изменить заметку. {ex.Message}.");
 						return;
 					}
@@ -128,16 +116,14 @@ namespace CLI
 					choice = 0;
 				}
 
-				switch (choice)
-				{
+				switch (choice) {
 					case 1:
 						Console.WriteLine($"Старый текст заметки:\n {note.Body}");
 						Console.WriteLine("Новый текст заметки (нажмите Esc для сохранения текста):");
 						note.Body = "";
 
 						ConsoleKeyInfo key = new();
-						while (key.Key != ConsoleKey.Escape)
-						{
+						while (key.Key != ConsoleKey.Escape) {
 							key = Console.ReadKey();
 							note.Body += key.KeyChar;
 						}
@@ -165,31 +151,22 @@ namespace CLI
 
 			bool flag = false;
 			int choice = -1;
-			while (flag == false)
-			{
-				try
-				{
+			while (flag == false) {
+				try {
 					choice = int.Parse(Console.ReadLine());
-				}
-				catch
-				{
+				} catch {
 					choice = -1;
 				}
 
 				if (choice >= 0 && choice <= 4)
-				{
 					flag = true;
-					break;
-				}
-				else
-				{
+				else {
 					flag = false;
 					Console.WriteLine("Ошибка ввода. Введите номер функции из списка.");
 				}
 			}
 
-			switch (choice)
-			{
+			switch (choice) {
 				case 0:
 					Exit();
 					break;
@@ -215,8 +192,7 @@ namespace CLI
 		public void ShowNotes()
 		{
 			Console.WriteLine("Список всех заметок\n============");
-			try
-			{
+			try {
 				foreach (var note in _noteService.GetAllNotesList())
 					Console.WriteLine(
 						$"\nУникальный идентификатор: {note.Id}\n" +
@@ -224,9 +200,7 @@ namespace CLI
 						$"Текст заметки: {note.Body}\n" +
 						$"Автоудаление: {(note.IsTemporal == true ? "включено" : "выключено")}"
 					);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Console.WriteLine($"Не удалось просмотреть заметку. {ex.Message}.");
 				return;
 			}

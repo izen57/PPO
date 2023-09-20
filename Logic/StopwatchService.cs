@@ -1,10 +1,13 @@
 ﻿using Model;
 
 using Serilog;
+
 using System.Drawing;
 
-namespace Logic {
-	public class StopwatchService: IStopwatchService {
+namespace Logic
+{
+	public class StopwatchService: IStopwatchService
+	{
 		static Stopwatch _stopwatch;
 
 		public StopwatchService(Stopwatch stopwatch)
@@ -12,7 +15,8 @@ namespace Logic {
 			_stopwatch = stopwatch;
 		}
 
-		public void Set() {
+		public void Set()
+		{
 			_stopwatch.Timing.Start();
 			_stopwatch.IsWorking = true;
 
@@ -29,7 +33,8 @@ namespace Logic {
 			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
-		public void Reset() {
+		public void Reset()
+		{
 			_stopwatch.Timing.Reset();
 			_stopwatch.TimeFlags.Clear();
 			_stopwatch.IsWorking = false;
@@ -43,13 +48,14 @@ namespace Logic {
 			return _stopwatch.Timing.ElapsedMilliseconds;
 		}
 
-		public Stopwatch Get() {
+		public Stopwatch Get()
+		{
 			return _stopwatch;
 		}
 
-		public void EditColor(Color stopwatchColor) {
+		public void EditColor(Color stopwatchColor)
+		{
 			_stopwatch.StopwatchColor = stopwatchColor;
-
 			Log.Logger.Information("Цвет секундомера изменён.");
 		}
 	}

@@ -17,13 +17,10 @@ namespace RepositoriesImplementations
 
 		public AlarmClockFileRepo()
 		{
-			try
-			{
+			try {
 				_isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
 				_isoStore.CreateDirectory("alarmclocks");
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				throw new AlarmClockCreateException(
 					"AlarmClockFileRepo: Невозможно создать защищённое хранилище будильников.",
 					ex
@@ -35,8 +32,7 @@ namespace RepositoriesImplementations
 
 		public void Create(AlarmClock alarmClock)
 		{
-			if (_isoStore.AvailableFreeSpace <= 0)
-			{
+			if (_isoStore.AvailableFreeSpace <= 0) {
 				Log.Logger.Error("Место в защищённом хранилище будильников закончилось.");
 				throw new AlarmClockCreateException(
 					"AlarmClockCreate: Место в защищённом хранилище будильников закончилось.",
@@ -46,12 +42,9 @@ namespace RepositoriesImplementations
 			string filepath = $"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt";
 
 			IsolatedStorageFileStream isoStream;
-			try
-			{
+			try {
 				isoStream = _isoStore.CreateFile(filepath);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error($"Файл с названием \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\" нельзя открыть.");
 				throw new AlarmClockEditException(
 					$"AlarmClockEdit: Файл с названием \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\" нельзя открыть.",
@@ -64,29 +57,26 @@ namespace RepositoriesImplementations
 			writer.WriteLine(alarmClock.AlarmClockColor.Name);
 			writer.WriteLine(alarmClock.IsWorking);
 
-			Log.Logger.Information("Создан файл будильника со следующей информацией:" +
+			Log.Logger.Information(
+				"Создан файл будильника со следующей информацией:" +
 				$"{alarmClock.Name}," +
 				$"{alarmClock.AlarmTime}," +
 				$"{alarmClock.AlarmClockColor.Name}," +
 				$"{alarmClock.IsWorking}."
 			);
-			
 		}
 
 		public void Edit(AlarmClock alarmClock, DateTime oldTime)
 		{
 			IsolatedStorageFileStream isoStream;
-			try
-			{
+			try {
 				isoStream = new(
 					$"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt",
 					FileMode.Create,
 					FileAccess.Write,
 					_isoStore
 				);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error($"Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
 				throw new AlarmClockEditException(
 					$"AlarmClockEdit: Файл с названием \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.",
@@ -94,14 +84,14 @@ namespace RepositoriesImplementations
 				);
 			}
 
-			using (StreamWriter writer = new(isoStream))
-			{
+			using (StreamWriter writer = new(isoStream)) {
 				writer.WriteLine(alarmClock.Name);
 				writer.WriteLine(alarmClock.AlarmClockColor.Name);
 				writer.WriteLine(alarmClock.IsWorking);
 			}
 
-			Log.Logger.Information("Изменён файл будильника следующей информацией:" +
+			Log.Logger.Information(
+				"Изменён файл будильника следующей информацией:" +
 				$"{alarmClock.Name}," +
 				$"{alarmClock.AlarmTime}," +
 				$"{alarmClock.AlarmClockColor.Name}," +
@@ -114,24 +104,20 @@ namespace RepositoriesImplementations
 				$"Старое название файла: \"alarmclocks/{oldTime:dd/MM/yyyy HH-mm-ss}.txt\".\n" +
 				$"Новое название файла: \"alarmclocks/{alarmClock.AlarmTime:dd/MM/yyyy HH-mm-ss}.txt\"."
 			);
-			
 		}
 
 		public void Delete(DateTime alarmTime)
 		{
 			IsolatedStorageFileStream isoStream;
 			string filepath = $"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt";
-			try
-			{
+			try {
 				isoStream = new(
 					filepath,
 					FileMode.Open,
 					FileAccess.Write,
 					_isoStore
 				);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error($"Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.");
 				throw new AlarmClockDeleteException(
 					$"AlarmClockDelete: Файл с названием \"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt\" не найден.",
@@ -143,19 +129,15 @@ namespace RepositoriesImplementations
 			_isoStore.DeleteFile(filepath);
 
 			Log.Logger.Information($"Удалён файл будильника. Время будильника: {alarmTime}.");
-
 		}
 
 		public AlarmClock? GetAlarmClock(DateTime alarmTime)
 		{
 			string[] filelist;
 			string filepath = $"alarmclocks/{alarmTime:dd/MM/yyyy HH-mm-ss}.txt";
-			try
-			{
+			try {
 				filelist = _isoStore.GetFileNames(filepath);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error("Папка для будильников в защищённом хранилище не найдена.");
 				throw new AlarmClockGetException(
 					"AlarmClockGet: Папка для будильников в защищённом хранилище не найдена.",
@@ -164,8 +146,7 @@ namespace RepositoriesImplementations
 			}
 
 			foreach (string fileName in filelist)
-				if (fileName.Equals($"{alarmTime:dd/MM/yyyy HH-mm-ss}.txt"))
-				{
+				if (fileName.Equals($"{alarmTime:dd/MM/yyyy HH-mm-ss}.txt")) {
 					using var readerStream = new StreamReader(new IsolatedStorageFileStream(
 						filepath,
 						FileMode.Open,
@@ -175,8 +156,7 @@ namespace RepositoriesImplementations
 					string? alarmClockName = readerStream.ReadLine();
 					string? alarmClockColor = readerStream.ReadLine();
 					string? alarmClockWork = readerStream.ReadLine();
-					if (alarmClockName == null || alarmClockColor == null || alarmClockWork == null)
-					{
+					if (alarmClockName == null || alarmClockColor == null || alarmClockWork == null) {
 						Log.Logger.Error($"Ошибка чтения файла будильника. Время будильника: {alarmTime}.");
 						throw new ArgumentNullException();
 					}
@@ -195,12 +175,9 @@ namespace RepositoriesImplementations
 		public List<AlarmClock> GetAllAlarmClocksList()
 		{
 			string[] filelist;
-			try
-			{
+			try {
 				filelist = _isoStore.GetFileNames("alarmclocks/");
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error("Папка для будильников в защищённом хранилище не найдена.");
 				throw new AlarmClockGetException(
 					"AlarmClockGet: Папка для будильников в защищённом хранилище не найдена.",
@@ -209,8 +186,7 @@ namespace RepositoriesImplementations
 			}
 
 			List<AlarmClock> alarmClockList = new();
-			foreach (string fileName in filelist)
-			{
+			foreach (string fileName in filelist) {
 				var alarmClock = GetAlarmClock(DateTime.Parse(fileName.Replace(".txt", "").Replace("-", ":")));
 				alarmClockList.Add(alarmClock!);
 			}

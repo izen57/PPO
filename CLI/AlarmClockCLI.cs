@@ -40,12 +40,9 @@ namespace CLI
 			Console.WriteLine("Запустить будильник сейчас (y/n): ");
 			bool isWorking = Console.ReadLine() == "y";
 
-			try
-			{
+			try {
 				_alarmClockService.Create(new AlarmClock(alarmTime, alarmName, alarmColor, isWorking));
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Console.WriteLine($"Не удалось создать будильник. {ex.Message}.");
 				return;
 			}
@@ -69,14 +66,10 @@ namespace CLI
 
 			bool flag = false;
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
-				if (dateTime == alarmClock.AlarmTime)
-				{
-					try
-					{
+				if (dateTime == alarmClock.AlarmTime) {
+					try {
 						_alarmClockService.Delete(dateTime);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						Console.WriteLine($"Не удалось удалить будильник. {ex.Message}.");
 						return;
 					}
@@ -100,15 +93,11 @@ namespace CLI
 
 			bool flag = false;
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
-				if (dateTime == alarmClock.AlarmTime)
-				{
+				if (dateTime == alarmClock.AlarmTime) {
 					ChooseAlarmClockParam(alarmClock);
-					try
-					{
+					try {
 						_alarmClockService.Edit(alarmClock, dateTime);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						Console.WriteLine($"Не удалось изменить будильник. {ex.Message}.");
 						return;
 					}
@@ -124,8 +113,7 @@ namespace CLI
 		private void ChooseAlarmClockParam(AlarmClock alarmClock)
 		{
 			int choice;
-			do
-			{
+			do {
 				Console.WriteLine(
 					"\n============\n" +
 					"Выберите параметр, по которому будет изменён выбранный будильник:\n" +
@@ -135,17 +123,13 @@ namespace CLI
 					"3 - Цвет (на английском)\n" +
 					$"4 - {(alarmClock.IsWorking == true ? "Выключить" : "Включить")}"
 				);
-				try
-				{
+				try {
 					choice = int.Parse(Console.ReadLine());
-				}
-				catch
-				{
+				} catch {
 					choice = 0;
 				}
 
-				switch (choice)
-				{
+				switch (choice) {
 					case 1:
 						Console.Write("Введите время будильника: ");
 						DateTime dateTime;
@@ -185,31 +169,22 @@ namespace CLI
 
 			bool flag = false;
 			int choice = -1;
-			while (flag == false)
-			{
-				try
-				{
+			while (flag == false) {
+				try {
 					choice = int.Parse(Console.ReadLine());
-				}
-				catch
-				{
+				} catch {
 					choice = -1;
 				}
 
 				if (choice >= 0 && choice <= 4)
-				{
 					flag = true;
-					break;
-				}
-				else
-				{
+				else {
 					flag = false;
 					Console.WriteLine("Ошибка ввода. Введите номер функции из списка.");
 				}
 			}
 
-			switch (choice)
-			{
+			switch (choice) {
 				case 0:
 					Exit();
 					break;
@@ -244,32 +219,31 @@ namespace CLI
 		public void AlarmClockSignal(object sender, ElapsedEventArgs e)
 		{
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
-			if (alarmClock.IsWorking &&
-				DateTime.Now >= alarmClock.AlarmTime &&
-				DateTime.Now <= alarmClock.AlarmTime + new TimeSpan(0, 0, 30)
-			) {
-				for (int i = 0; i < 5; ++i) {
+				if (alarmClock.IsWorking &&
+					DateTime.Now >= alarmClock.AlarmTime &&
+					DateTime.Now <= alarmClock.AlarmTime + new TimeSpan(0, 0, 30)
+				) {
+					for (int i = 0; i < 5; ++i) {
+						Console.Clear();
+						Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
+						Console.Clear();
+						Thread.Sleep(100);
+						Console.ResetColor();
+					}
 					Console.Clear();
-					Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
-					Console.Clear();
-					Thread.Sleep(100);
-					Console.ResetColor();
+
+					Console.WriteLine($"Только что сработал будильник, установленный на время {alarmClock.AlarmTime}. Теперь этот будильник выключен.");
+
+					alarmClock.IsWorking = false;
+					_alarmClockService.Edit(alarmClock, alarmClock.AlarmTime);
+					Menu();
 				}
-				Console.Clear();
-
-				Console.WriteLine($"Только что сработал будильник, установленный на время {alarmClock.AlarmTime}. Теперь этот будильник выключен.");
-
-				alarmClock.IsWorking = false;
-				_alarmClockService.Edit(alarmClock, alarmClock.AlarmTime);
-				Menu();
-			}
 		}
 
 		public void ShowAlarmClocks()
 		{
 			Console.WriteLine("Список всех будильников\n============");
-			try
-			{
+			try {
 				foreach (var alarmclock in _alarmClockService.GetAllAlarmClocks())
 					Console.WriteLine(
 						$"\nВремя: {alarmclock.AlarmTime}\n" +
@@ -277,9 +251,7 @@ namespace CLI
 						$"Цвет: {alarmclock.AlarmClockColor.Name}\n" +
 						$"Режим: {(alarmclock.IsWorking == true ? "включён" : "выключен")}"
 					);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Console.WriteLine($"Не удалось просмотреть будильник. {ex.Message}.");
 				return;
 			}

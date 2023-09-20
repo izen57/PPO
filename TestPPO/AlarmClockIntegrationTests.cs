@@ -1,13 +1,16 @@
-﻿using RepositoriesImplementations;
-using Repositories;
-using Logic;
+﻿using Logic;
+
 using Model;
+
+using Repositories;
+
+using RepositoriesImplementations;
 
 using System.Drawing;
 
 namespace TestPPO
 {
-	public class AlarmClockIntegraionTests
+	public class AlarmClockIntegrationTests
 	{
 		[TestMethod]
 		public void AlarmClockTest()

@@ -1,5 +1,7 @@
-﻿namespace Model {
-	public class Note {
+﻿namespace Model
+{
+	public class Note
+	{
 		public Guid Id { get; private set; }
 		public DateTime CreationTime { get; set; }
 		public string Body { get; set; }
@@ -13,14 +15,16 @@
 			IsTemporal = isTemporal;
 		}
 
-		public Note(Guid id, DateTime creationTime, string body, bool isTemporal) {
+		public Note(Guid id, DateTime creationTime, string body, bool isTemporal)
+		{
 			Id = id;
 			CreationTime = creationTime;
 			Body = body;
 			IsTemporal = isTemporal;
 		}
 
-		public TimeSpan RemovalTime() {
+		public TimeSpan RemovalTime()
+		{
 			return DateTime.Now - CreationTime;
 		}
 	}

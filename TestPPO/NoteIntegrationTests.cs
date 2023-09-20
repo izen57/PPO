@@ -1,7 +1,10 @@
-﻿using Repositories;
-using RepositoriesImplementations;
-using Logic;
+﻿using Logic;
+
 using Model;
+
+using Repositories;
+
+using RepositoriesImplementations;
 
 namespace TestPPO
 {
@@ -11,7 +14,7 @@ namespace TestPPO
 		[TestMethod]
 		public void NoteTest()
 		{
-			INotificationRepo notesRepo = new NoteFileRepo();
+			INoteRepo notesRepo = new NoteFileRepo();
 			INoteService notesService = new NoteService(notesRepo);
 			var id = Guid.NewGuid();
 			

@@ -14,8 +14,7 @@ namespace CLI
 				.AddJsonFile("appsettings.json")
 				.Build();
 
-			switch (_config["LoggerLevel"])
-			{
+			switch (_config["LoggerLevel"]) {
 				case "Verbose":
 					Log.Logger = new LoggerConfiguration()
 						.MinimumLevel.Verbose()
@@ -65,27 +64,21 @@ namespace CLI
 
 			bool flag = false;
 			int choice = -1;
-			while (flag == false)
-			{
-				try
-				{
+			while (flag == false) {
+				try {
 					choice = int.Parse(Console.ReadLine());
-				}
-				catch
-				{
+				} catch {
 					choice = -1;
 				}
 				if (choice >= 0 && choice <= 4)
 					flag = true;
-				else
-				{
+				else {
 					flag = false;
 					Console.WriteLine("Ошибка ввода. Введите номер функции из списка.");
 				}
 			}
 
-			switch (choice)
-			{
+			switch (choice) {
 				case 0:
 					Console.WriteLine("Выход из приложения...");
 					Log.Logger.Debug("Осуществлён выход из приложения.");

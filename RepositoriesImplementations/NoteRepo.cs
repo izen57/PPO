@@ -17,13 +17,10 @@ namespace RepositoriesImplementations
 
 		public NoteFileRepo()
 		{
-			try
-			{
+			try {
 				_isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
 				_isoStore.CreateDirectory("notes");
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error("Папку заметок не удалось создать.");
 				throw new NoteCreateException(
 					"NoteFileRepo: Невозможно создать защищённое хранилище заметок.",
@@ -35,8 +32,7 @@ namespace RepositoriesImplementations
 
 		public void Create(Note note)
 		{
-			if (_isoStore.AvailableFreeSpace <= 0)
-			{
+			if (_isoStore.AvailableFreeSpace <= 0) {
 				Log.Logger.Error("Место в папке заметок закончилось.");
 				throw new NoteCreateException(
 					"NoteCreate: Место в папке заметок закончилось.",
@@ -45,11 +41,9 @@ namespace RepositoriesImplementations
 			}
 
 			IsolatedStorageFileStream isoStream;
-			try
-			{
+			try {
 				isoStream = _isoStore.CreateFile($"notes/{note.Id}.txt");
-			}
-			catch (Exception ex)
+			} catch (Exception ex)
 			{
 				Log.Logger.Error($"Файл с названием \"notes/{note.Id}.txt\" нельзя открыть.");
 				throw new AlarmClockEditException(
@@ -74,17 +68,14 @@ namespace RepositoriesImplementations
 		public void Edit(Note note)
 		{
 			IsolatedStorageFileStream isoStream;
-			try
-			{
+			try {
 				isoStream = new(
 					$"notes/{note.Id}.txt",
 					FileMode.Create,
 					FileAccess.Write,
 					_isoStore
 				);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error($"Файл с названием \"notes/{note.Id}.txt\" не найден.");
 				throw new NoteEditException(
 					$"NoteEdit: Файл с названием \"notes/{note.Id}.txt\" не найден.",
@@ -93,12 +84,12 @@ namespace RepositoriesImplementations
 			}
 
 			using StreamWriter writer = new(isoStream);
-
 			writer.WriteLine(note.CreationTime);
 			writer.WriteLine(note.Body);
 			writer.WriteLine(note.IsTemporal);
 
-			Log.Logger.Information("Изменён файл заметки со следующей информацией:\n" +
+			Log.Logger.Information(
+				"Изменён файл заметки со следующей информацией:\n" +
 				$"{note.Id}," +
 				$"{note.CreationTime}," +
 				$"{note.Body}," +
@@ -109,8 +100,7 @@ namespace RepositoriesImplementations
 		public void Delete(Guid Id)
 		{
 			IsolatedStorageFileStream isoStream;
-			try
-			{
+			try {
 				isoStream = new(
 					$"notes/{Id}.txt",
 					FileMode.Open,
@@ -118,8 +108,7 @@ namespace RepositoriesImplementations
 					_isoStore
 				);
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				Log.Logger.Error($"{DateTime.Now}: Файл с названием \"notes/{Id}.txt\" не найден.");
 				throw new NoteDeleteException(
 					$"NoteDelete: Файл с названием \"notes/{Id}.txt\" не найден.",
@@ -136,12 +125,9 @@ namespace RepositoriesImplementations
 		public Note? GetNote(Guid Id)
 		{
 			string[] filelist;
-			try
-			{
+			try {
 				filelist = _isoStore.GetFileNames($"notes/{Id}.txt");
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error($"Папка для заметок в защищённом хранилище не найдена.");
 				throw new NoteGetException(
 					"GetNote: Папка для заметок в защищённом хранилище не найдена.",
@@ -150,8 +136,7 @@ namespace RepositoriesImplementations
 			}
 
 			foreach (string fileName in filelist)
-				if (fileName.Replace(".txt", "") == Id.ToString())
-				{
+				if (fileName.Replace(".txt", "") == Id.ToString()) {
 					using var readerStream = new StreamReader(new IsolatedStorageFileStream(
 						$"notes/{Id}.txt",
 						FileMode.Open,
@@ -161,8 +146,7 @@ namespace RepositoriesImplementations
 					string? noteCreationTime = readerStream.ReadLine();
 					string? noteBody = readerStream.ReadLine();
 					string? noteIsTemporal = readerStream.ReadLine();
-					if (noteCreationTime == null || noteBody == null || noteIsTemporal == null)
-					{
+					if (noteCreationTime == null || noteBody == null || noteIsTemporal == null) {
 						Log.Logger.Error($"Ошибка чтения файла заметки. Идентификатор заметки: {Id}.");
 						throw new ArgumentNullException();
 					}
@@ -181,12 +165,9 @@ namespace RepositoriesImplementations
 		public List<Note> GetAllNotesList()
 		{
 			string[] filelist;
-			try
-			{
+			try {
 				filelist = _isoStore.GetFileNames("notes/");
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				Log.Logger.Error("Папка для заметок в защищённом хранилище не найдена.");
 				throw new NoteGetException(
 					"NoteGet: Папка для заметок в защищённом хранилище не найдена.",
@@ -195,8 +176,7 @@ namespace RepositoriesImplementations
 			}
 
 			List<Note> noteList = new();
-			foreach (string fileName in filelist)
-			{
+			foreach (string fileName in filelist) {
 				var note = GetNote(Guid.Parse(fileName.Replace(".txt", "")));
 				noteList.Add(note!);
 			}

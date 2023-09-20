@@ -1,7 +1,9 @@
 ﻿using Logic;
+
 using Model;
 
 using System.Drawing;
+
 using User_Interface;
 
 using SysStopwatch = System.Diagnostics;
@@ -45,31 +47,22 @@ namespace CLI
 
 			bool flag = false;
 			int choice = -1;
-			while (flag == false)
-			{
-				try
-				{
+			while (flag == false) {
+				try {
 					choice = int.Parse(Console.ReadLine());
-				}
-				catch
-				{
+				} catch {
 					choice = -1;
 				}
 
 				if (choice >= 0 && choice <= 6)
-				{
 					flag = true;
-					break;
-				}
-				else
-				{
+				else {
 					flag = false;
 					Console.WriteLine("Ошибка ввода. Введите номер функции из списка.");
 				}
 			}
 
-			switch (choice)
-			{
+			switch (choice) {
 				case 0:
 					Exit();
 					break;
