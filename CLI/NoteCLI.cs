@@ -1,6 +1,8 @@
-﻿using RepositoriesImplementations;
-using Logic;
+﻿using Logic;
+
 using Model;
+
+using RepositoriesImplementations;
 
 using User_Interface;
 
@@ -112,56 +114,42 @@ namespace CLI
 
 		private void ChooseNoteParam(Note note)
 		{
-			Console.WriteLine(
-				"============\nВыберите параметр, по которому будет изменена выбранная заметка:\n" +
-				"0 - Готово\n" +
-				"1 - Текст\n" +
-				$"2 - {(note.IsTemporal == true ? "Выключить автоудаление" : "Включить автоудаление")}"
-			);
-			bool flag = false;
-			int choice = -1;
-			while (flag == false)
-			{
-				try
-				{
+			int choice;
+			do {
+				Console.WriteLine(
+					"============\nВыберите параметр, по которому будет изменена выбранная заметка:\n" +
+					"0 - Готово\n" +
+					"1 - Текст\n" +
+					$"2 - {(note.IsTemporal == true ? "Выключить автоудаление" : "Включить автоудаление")}"
+				);
+				try {
 					choice = int.Parse(Console.ReadLine());
-				}
-				catch
-				{
-					choice = -1;
+				} catch {
+					choice = 0;
 				}
 
-				if (choice >= 0 && choice <= 4)
+				switch (choice)
 				{
-					flag = true;
-					break;
-				}
-				else
-				{
-					flag = false;
-					Console.WriteLine("Ошибка ввода. Введите номер функции из списка.");
-				}
-			}
+					case 1:
+						Console.WriteLine($"Старый текст заметки:\n {note.Body}");
+						Console.WriteLine("Новый текст заметки (нажмите Esc для сохранения текста):");
+						note.Body = "";
 
-			switch (choice)
-			{
-				case 1:
-					Console.WriteLine($"Старый текст заметки:\n {note.Body}");
-					Console.WriteLine("Новый текст заметки (нажмите Esc для сохранения текста):");
-					note.Body = "";
-
-					ConsoleKeyInfo key = new();
-					while (key.Key != ConsoleKey.Escape)
-					{
-						key = Console.ReadKey();
-						note.Body += key.KeyChar;
-					}
-					break;
-				case 2:
-					note.IsTemporal = !note.IsTemporal;
-					Console.WriteLine($"Автоудаление {(note.IsTemporal == true ? "включено" : "выключено")}");
-					break;
-			}
+						ConsoleKeyInfo key = new();
+						while (key.Key != ConsoleKey.Escape)
+						{
+							key = Console.ReadKey();
+							note.Body += key.KeyChar;
+						}
+						break;
+					case 2:
+						note.IsTemporal = !note.IsTemporal;
+						Console.WriteLine($"Автоудаление {(note.IsTemporal == true ? "включено" : "выключено")}");
+						break;
+					default:
+						continue;
+				}
+			} while (choice != 0);
 		}
 
 		public void Menu()

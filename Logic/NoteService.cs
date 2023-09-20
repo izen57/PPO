@@ -1,10 +1,15 @@
-﻿using Repositories;
-using Model;
+﻿using Model;
+
+using Repositories;
+
 using Serilog;
+
 using System.Timers;
 
-namespace Logic {
-	public class NoteService: INoteService {
+namespace Logic
+{
+	public class NoteService: INoteService
+	{
 		INoteRepo _repository;
 		System.Timers.Timer _checkForTime;
 

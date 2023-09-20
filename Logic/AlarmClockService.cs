@@ -1,8 +1,11 @@
-﻿using Repositories;
-using Model;
+﻿using Model;
+
+using Repositories;
+
 using Serilog;
 
-namespace Logic {
+namespace Logic
+{
 	public class AlarmClockService: IAlarmClockService {
 		IAlarmClockRepo _repository;
 

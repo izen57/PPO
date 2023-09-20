@@ -26,7 +26,7 @@ namespace CLI
 
 		public void CreateAlarmClock()
 		{
-			Console.Write("Создание нового будильника. Введите время будильника: ");
+			Console.Write("Создание нового будильника. Введите время будильника (дд/ММ/гггг ЧЧ:мм:сс): ");
 			DateTime alarmTime;
 			while (!DateTime.TryParse(Console.ReadLine(), out alarmTime))
 				Console.Write("Ошибка ввода. Введите время будильника: ");
@@ -127,9 +127,10 @@ namespace CLI
 			do
 			{
 				Console.WriteLine(
-					"============\nВыберите параметр, по которому будет изменён выбранный будильник:\n" +
+					"\n============\n" +
+					"Выберите параметр, по которому будет изменён выбранный будильник:\n" +
 					"0 - Готово\n" +
-					"1 - Время (дд/ММ/гггг ЧЧ-мм-сс)\n" +
+					"1 - Время (дд/ММ/гггг ЧЧ:мм:сс)\n" +
 					"2 - Название\n" +
 					"3 - Цвет (на английском)\n" +
 					$"4 - {(alarmClock.IsWorking == true ? "Выключить" : "Включить")}"
@@ -146,6 +147,7 @@ namespace CLI
 				switch (choice)
 				{
 					case 1:
+						Console.Write("Введите время будильника: ");
 						DateTime dateTime;
 						while (!DateTime.TryParse(Console.ReadLine(), out dateTime))
 							Console.Write("Ошибка ввода. Введите время будильника: ");
@@ -242,24 +244,25 @@ namespace CLI
 		public void AlarmClockSignal(object sender, ElapsedEventArgs e)
 		{
 			foreach (var alarmClock in _alarmClockService.GetAllAlarmClocks())
-				if (alarmClock.IsWorking && DateTime.Now >= alarmClock.AlarmTime && DateTime.Now <= alarmClock.AlarmTime + new TimeSpan(0, 0, 30))
-				{
-					for (int i = 0; i < 10; ++i)
-					{
-						Console.Clear();
-						Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
-						Console.Clear();
-						Thread.Sleep(100);
-						Console.ResetColor();
-					}
+			if (alarmClock.IsWorking &&
+				DateTime.Now >= alarmClock.AlarmTime &&
+				DateTime.Now <= alarmClock.AlarmTime + new TimeSpan(0, 0, 30)
+			) {
+				for (int i = 0; i < 5; ++i) {
 					Console.Clear();
-
-					Console.WriteLine($"Только что сработал будильник, установленный на время {alarmClock.AlarmTime}. Теперь этот будильник выключен.");
-
-					alarmClock.IsWorking = false;
-					_alarmClockService.Edit(alarmClock, alarmClock.AlarmTime);
-					Menu();
+					Console.BackgroundColor = FromColor(alarmClock.AlarmClockColor);
+					Console.Clear();
+					Thread.Sleep(100);
+					Console.ResetColor();
 				}
+				Console.Clear();
+
+				Console.WriteLine($"Только что сработал будильник, установленный на время {alarmClock.AlarmTime}. Теперь этот будильник выключен.");
+
+				alarmClock.IsWorking = false;
+				_alarmClockService.Edit(alarmClock, alarmClock.AlarmTime);
+				Menu();
+			}
 		}
 
 		public void ShowAlarmClocks()

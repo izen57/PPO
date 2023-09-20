@@ -1,9 +1,13 @@
-﻿using Model;
-using System.IO.IsolatedStorage;
-using Serilog;
+﻿using Exceptions.AlarmClockExceptions;
 using Exceptions.NoteExceptions;
+
+using Model;
+
 using Repositories;
-using Exceptions.AlarmClockExceptions;
+
+using Serilog;
+
+using System.IO.IsolatedStorage;
 
 namespace RepositoriesImplementations
 {
@@ -94,7 +98,7 @@ namespace RepositoriesImplementations
 			writer.WriteLine(note.Body);
 			writer.WriteLine(note.IsTemporal);
 
-			Log.Logger.Information("Изменён файл заметки со следующей информацией:" +
+			Log.Logger.Information("Изменён файл заметки со следующей информацией:\n" +
 				$"{note.Id}," +
 				$"{note.CreationTime}," +
 				$"{note.Body}," +
@@ -159,7 +163,7 @@ namespace RepositoriesImplementations
 					string? noteIsTemporal = readerStream.ReadLine();
 					if (noteCreationTime == null || noteBody == null || noteIsTemporal == null)
 					{
-						Log.Logger.Error($"Ошибка разметки файла заметки. Идентификатор заметки: {Id}.");
+						Log.Logger.Error($"Ошибка чтения файла заметки. Идентификатор заметки: {Id}.");
 						throw new ArgumentNullException();
 					}
 

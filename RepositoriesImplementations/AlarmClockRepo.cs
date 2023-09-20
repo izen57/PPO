@@ -1,10 +1,13 @@
-﻿using Model;
-using System.Drawing;
-using System.IO.IsolatedStorage;
+﻿using Exceptions.AlarmClockExceptions;
+
+using Model;
+
+using Repositories;
 
 using Serilog;
-using Exceptions.AlarmClockExceptions;
-using Repositories;
+
+using System.Drawing;
+using System.IO.IsolatedStorage;
 
 namespace RepositoriesImplementations
 {
@@ -174,7 +177,7 @@ namespace RepositoriesImplementations
 					string? alarmClockWork = readerStream.ReadLine();
 					if (alarmClockName == null || alarmClockColor == null || alarmClockWork == null)
 					{
-						Log.Logger.Error($"Ошибка разметки файла будильника. Время будильника: {alarmTime}.");
+						Log.Logger.Error($"Ошибка чтения файла будильника. Время будильника: {alarmTime}.");
 						throw new ArgumentNullException();
 					}
 

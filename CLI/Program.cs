@@ -59,7 +59,8 @@ namespace CLI
 				"0 - Выход.\n" +
 				"1 - Будильники.\n" +
 				"2 - Заметки.\n" +
-				"3 - Секундомер.\n"
+				"3 - Секундомер.\n" +
+				"4 - Уведомления.\n"
 			);
 
 			bool flag = false;
@@ -74,11 +75,8 @@ namespace CLI
 				{
 					choice = -1;
 				}
-				if (choice >= 0 && choice <= 3)
-				{
+				if (choice >= 0 && choice <= 4)
 					flag = true;
-					break;
-				}
 				else
 				{
 					flag = false;
@@ -107,6 +105,11 @@ namespace CLI
 					StopwatchCLI stopwatchCLI = new();
 					stopwatchCLI.Menu();
 					Log.Logger.Debug("Выбран пункт секундомера.");
+					break;
+				case 4:
+					NotificationCLI notificationCLI = new();
+					notificationCLI.Menu();
+					Log.Logger.Debug("Выбран пункт уведомлений.");
 					break;
 			}
 			Log.CloseAndFlush();

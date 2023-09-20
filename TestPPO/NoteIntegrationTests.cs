@@ -11,7 +11,7 @@ namespace TestPPO
 		[TestMethod]
 		public void NoteTest()
 		{
-			INoteRepo notesRepo = new NoteFileRepo();
+			INotificationRepo notesRepo = new NoteFileRepo();
 			INoteService notesService = new NoteService(notesRepo);
 			var id = Guid.NewGuid();
 			
